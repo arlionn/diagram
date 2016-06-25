@@ -37,6 +37,6 @@ Package Structure
 -----------------
 
 The package includes only 1 Stata ado file named `diagram.ado`, 1 JavaScript file named
-__viz.js__ which is developed by [Michael Daines](https://www.github.com/mdaines), and another 
-JavaScript file for rendering the graphs into images named __diagram.js__. 
+`viz.js` which is developed by [Michael Daines](https://www.github.com/mdaines), and another 
+JavaScript file for rendering the graphs into images named `diagram.js`. 
 
