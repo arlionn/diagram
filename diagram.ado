@@ -1,7 +1,8 @@
 /*** DO NOT EDIT THIS LINE -----------------------------------------------------
 Version: 1.0.0
 Title: diagram
-Description: __diagram__ generates dynamic diagrams using __DOT__ markup language 
+Description: __diagram__ generates dynamic diagrams using 
+[DOT markup language](http://en.wikipedia.org/wiki/Dot)  
 and exports images in __pdf__, __png__, __jpeg__, __gif__, and __bmp__ format. For 
 more information [visit diagram homepage](http://www.haghish.com/dot).
 ----------------------------------------------------- DO NOT EDIT THIS LINE ***/
@@ -276,10 +277,9 @@ prog define diagram
 	
 end
 
-/*
-markdoc diagram.ado, exp(sthlp) replace
-markdoc diagram.ado, exp(pdf) replace style(stata) title("Dynamic Diagrams in Stata") ///
-author("E. F. Haghish") date 
+
+* markdoc diagram.ado, exp(sthlp) replace
+* markdoc diagram.ado, exp(pdf) replace style(stata) title("Dynamic Diagrams in Stata") author("E. F. Haghish") date 
 
 
 
