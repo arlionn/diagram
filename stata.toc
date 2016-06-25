@@ -1,0 +1,3 @@
+v 1
+d 'DIAGRAM': module for creating dynamic diagrams with graphviz
+p diagram

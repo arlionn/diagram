@@ -1,0 +1,5 @@
+digraph G {																		
+    a -> b; 																	
+    a [shape=polygon,sides=4,peripheries=3,color=lightblue,style=filled,label="Dynamic Literate Diagrams"]; 
+    b [shape=polygon,sides=4,peripheries=4,color=lightyellow,style=filled,label="In Stata"]; 
+} 	

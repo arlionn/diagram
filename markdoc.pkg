@@ -1,0 +1,28 @@
+d 'DIAGRAM': module for dynamic diagrams
+d
+d  diagram package produces diagrams from DOT markup language. The markup 
+d  language is highly customizable for generating various types of graphs 
+d  for different purposes.  
+d 
+d KW: DOT
+d KW: markup
+d KW: diagram
+d KW: graphic
+d KW: graph
+d KW: dynamic
+d KW: graphviz
+d KW: javascript
+d KW: image
+d KW: reproducible
+d
+d Requires: Stata version 11 or higher
+d
+d Distribution-Date: 20160625
+d
+d Author: E.F. Haghish, University of Freiburg
+d Support: email haghish@imbi.uni-freiburg.de
+d
+f diagram.ado
+f diagram.sthlp
+F diagram.js
+F viz.js

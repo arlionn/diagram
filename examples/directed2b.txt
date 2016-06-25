@@ -1,0 +1,15 @@
+digraph G {
+    rankdir="LR";
+    node[fontsize=10]
+    graph[size="9,3"]
+    
+    a -> b; b -> c; c-> d; d-> e; e->f; f -> g;
+    
+    a [shape=triangle,color=lightblue,style=filled,label="Raw Data"];
+    b [shape=box,color=ivory,style=filled,label="Cleaning data"];
+    c [shape=polygon,sides=5,color=lightsalmon,style=filled,label="Exploratory analysis"];
+    d [shape=hexagon,color=lightseagreen,style=filled,label="Hypothesis testing"];
+    e [shape=polygon,sides=7,color=orangered,style=filled,label="Inference"];
+    f [shape=octagon,pcolor=lightcyan,style=filled,label="Dynamic report"];
+    g [shape=ellipse,color=lightyellow,peripheries=4,style=filled,label="Publication"];
+}

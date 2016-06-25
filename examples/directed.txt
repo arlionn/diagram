@@ -1,0 +1,13 @@
+digraph G {																		
+    rankdir="LR";																
+    node[fontsize=10]															
+    graph[size="9,3"]															
+    a -> b; b -> c; c-> d; d-> e; e->f; f -> g;									
+    a [label="Raw Data"];														
+    b [label="Cleaning data"];													
+    c [label="Exploratory analysis"];											
+    d [label="Hypothesis testing"];												
+    e [label="Inference"];														
+    f [label="Dynamic report"];													
+    g [label="Publication"];													
+}	
