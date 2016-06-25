@@ -24,7 +24,7 @@ diagram graph G {																///
     new -- runmem;																///
     sleep -- runmem;															///
 }																				///
-, magnify(1.2)	export("./examples/test.png") replace 							///
+, magnify(1.2)	export("test.png") replace 							///
 phantomjs("/usr/local/bin/phantomjs") engine(neato)												
 
 

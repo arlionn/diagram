@@ -159,20 +159,28 @@ prog define diagram
 		error 198
 	}
 	
+	local wk : pwd
+	qui cd "`c(sysdir_plus)'v"
+	local here : pwd
+	
 	// Get the path to graphViz JavaScript file
-	capture findfile viz.js
+	capture findfile viz.js, path("`here'")
 	if _rc != 0 {
 		di as err "graphViz javascript not found. Please reinstall {help diagram}"
 		error 198
 	}
 	else local javascript "`r(fn)'"
 	
-	capture findfile diagram.js
+	qui cd "`c(sysdir_plus)'d"
+	local here : pwd
+	capture findfile diagram.js, path("`here'")
 	if _rc != 0 {
 		di as err "diagram.js javascript not found. Please reinstall {help diagram}"
 		error 198
 	}
 	else local command "`r(fn)'"
+
+	qui cd "`wk'"
 
 	
 	if missing("`phantomjs'") local phantomjs phantomjs
