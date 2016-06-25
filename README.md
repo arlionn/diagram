@@ -9,11 +9,11 @@ more information [visit diagram homepage](http://www.haghish.com/dot).
 Author
 ------
   **E. F. Haghish**  
-  Center for Medical Biometry and Medical Informatics
-  University of Freiburg, Germany      
-  _haghish@imbi.uni-freiburg.de_     
-  _http://www.haghish.com/dot_  
-  _[@Haghish](https://twitter.com/Haghish)_   
+  Center for Medical Biometry and Medical Informatics    
+  University of Freiburg, Germany        
+  _haghish@imbi.uni-freiburg.de_       
+  _http://www.haghish.com/dot_      
+  _[@Haghish](https://twitter.com/Haghish)_      
   
 Installation
 ------------
