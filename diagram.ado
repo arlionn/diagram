@@ -105,8 +105,7 @@ Third-party software
 For exporting graphical files, the package requires [phantomJS](http://phantomjs.org/download.html), 
 which is an open-source freeware available for Windows, Mac, and Linux. The 
 path to the executable _phantomjs_ file is required in order to export the 
-graphical files. However, if the executable file is installed in the default local 
-directory (e.g. {bf:/usr/local/bin/} in Mac), the {opt phantomjs(str)} can be ignored. 
+graphical files.  
 
 
 Example(s)
