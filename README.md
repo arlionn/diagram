@@ -3,7 +3,7 @@
 __`diagram`__ generates dynamic diagrams using 
 [DOT markup language](http://en.wikipedia.org/wiki/Dot)  
 and exports images in __pdf__, __png__, __jpeg__, __gif__, and __bmp__ format. For 
-more information [visit diagram homepage](http://www.haghish.com/dot).
+more information [visit diagram homepage](http://www.haghish.com/dot). It can also generate diagrams automatically from Stata data set. 
 
         
 Author
