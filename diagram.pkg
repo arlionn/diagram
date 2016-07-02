@@ -3,7 +3,7 @@ d
 d  diagram package produces diagrams from DOT markup language. The markup 
 d  language is highly customizable for generating various types of graphs 
 d  for different purposes.  
-d 
+d
 d KW: DOT
 d KW: markup
 d KW: diagram
@@ -15,7 +15,7 @@ d KW: javascript
 d KW: image
 d KW: reproducible
 d
-d Requires: Stata version 11 or higher
+d Requires: Stata version 11 or higher and the 'WEBIMAGE' package
 d
 d Distribution-Date: 20160625
 d
@@ -24,5 +24,4 @@ d Support: email haghish@imbi.uni-freiburg.de
 d
 f diagram.ado
 f diagram.sthlp
-F diagram.js
 F viz.js

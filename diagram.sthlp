@@ -3,7 +3,7 @@
 {title:Title}
 
 {phang}
-{cmd:diagram} {hline 2} {bf:diagram} generates dynamic diagrams using {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language} and exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. For more information  {browse "http://www.haghish.com/dot":visit diagram homepage}.
+{cmd:diagram} {hline 2} {bf:diagram} generates dynamic diagrams using {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language}    {break} and exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. For more information  {browse "http://www.haghish.com/dot":visit diagram homepage}.
 
 
 {title:Syntax}
@@ -19,7 +19,7 @@
 {synoptline}
 {synopt:{opt replace}}replace the exported diagram{p_end}
 {synopt:{opt engine(name)}}specifies the    {break}
-{browse "http://www.graphviz.org/Download.php":graphViz} engine for rendering the
+{browse {c 34}http://www.graphviz.org/Download.php{c 34}:graphViz} engine for rendering the
 diagram which can be {bf:dot}, {bf:osage}, {bf:circo}, {bf:neato}, {bf:twopi} and {bf:fdp}s.
 The default engine is {bf:dot} {p_end}
 {synopt:{opt e:xport(filename)}}export the diagram. The file extension specifies the
@@ -73,7 +73,7 @@ The most popular engines are {bf:dot} and {bf:neato}. A brief description of the
 engines is presented below :
 
 {p 4 4 2}
-{browse "http://www.graphviz.org/pdf/dot.1.pdf":dot} - "directed graphs" which is the
+{browse "http://www.graphviz.org/pdf/dot.1.pdf":dot} - {c 34}directed graphs{c 34} which is the
 default engine for rendering graphs where edges have directionality e.g.
 {bf:A -> B}.
 
@@ -137,6 +137,6 @@ University of Southern Denmark       {break}
 haghish@imbi.uni-freiburg.de       {break}
 
 {p 4 4 2}
-{browse "http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php":http://www.haghish.com/markdoc}     {break}
+{browse {c 34}http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php{c 34}:http://www.haghish.com/markdoc}     {break}
 Package Updates on  {browse "http://www.twitter.com/Haghish":Twitter}    {break}
 
