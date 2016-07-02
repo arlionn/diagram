@@ -39,12 +39,10 @@ which is an open-source freeware available for Windows, Mac, and Linux. The
 path to the executable [phantomJS](http://phantomjs.org/download.html) file is required in order to export the graphical files. However, if the executable file is installed in the default local 
 directory (e.g. `/usr/local/bin/` in Mac), the `phantomjs(str)` can be ignored. 
 
-Installation
+Examples
 ------------
 
 The __examples__ directory includes several examples for generating dynamic diagrams from `DOT` markup and Stata data sets. 
-
-
 
 
 ![](banner.png)
