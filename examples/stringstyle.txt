@@ -1,0 +1,9 @@
+	subgraph cluster_processnumber1 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+	}
+	subgraph cluster_processnumber2 {
+		node [style=filled];
+		color=blue;
+	}

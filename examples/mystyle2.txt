@@ -1,0 +1,11 @@
+	98 [shape=Mdiamond];
+	99 [shape=Msquare];
+	subgraph cluster_1 {
+		style=filled;
+		color=lightgrey;
+		node [style=filled,color=white];
+	}
+	subgraph cluster_2 {
+		node [style=filled];
+		color=blue;
+	}

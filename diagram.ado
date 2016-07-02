@@ -143,12 +143,12 @@ Package Updates on [Twitter](http://www.twitter.com/Haghish)
 
 
 
-*cap prog drop diagram     
+cap prog drop diagram     
 prog define diagram
 	version 11
 	syntax [anything] [using/] , Export(str) [MAGnify(real 1.0)] [replace] 		///
-	[phantomjs(str)] [install] [engine(name)]
-	
+	[phantomjs(str)] [install] [engine(name)] [Noisily]
+	 
 
 	
 	// Syntax processing
@@ -187,18 +187,29 @@ prog define diagram
 	  
 	local anything : di `"'`macval(anything)''"'
 	
-	
+	// Analyze DOT scripts and data sets
+	// =========================================================================
 	if !missing("`using'") {
-		confirm file "`using'"
-		tempfile tmp 
-		tempname hitch 
-		qui file open `hitch' using "`using'", read
-		file read `hitch' line
-		while r(eof)==0 {
-			local source = `"`macval(source)'"' +  `"`macval(line)'"'
-			file read `hitch' line
+		
+		if (index(lower("`using'"),".dta")) {
+		preserve 
+		clear
+		quietly use "`using'"
+		
+		restore
 		}
-		local anything `"'`macval(source)''"'
+		else {
+			confirm file "`using'"
+			tempfile tmp 
+			tempname hitch 
+			qui file open `hitch' using "`using'", read
+			file read `hitch' line
+			while r(eof)==0 {
+				local source = `"`macval(source)'"' +  `"`macval(line)'"'
+				file read `hitch' line
+			}
+			local anything `"'`macval(source)''"'
+		}
 	}
 	
 	// Specify the engine
@@ -274,7 +285,7 @@ prog define diagram
 	qui copy "`tmp'" "_tmp_file_000.html", replace
 	! "`phantomjs'" "`command'" "_tmp_file_000.html" "`export'"
 	
-	capture qui erase "_tmp_file_000.html"
+	if missing("`noisily'") capture qui erase "_tmp_file_000.html"
 	
 	cap confirm file "`export'"
 	if _rc == 0 {
@@ -285,7 +296,7 @@ prog define diagram
 end
 
 
-* markdoc diagram.ado, exp(sthlp) replace
+ markdoc diagram.ado, exp(sthlp) replace
 * markdoc diagram.ado, exp(pdf) replace style(stata) title("Dynamic Diagrams in Stata") author("E. F. Haghish") date 
 
 
