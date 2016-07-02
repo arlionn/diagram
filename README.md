@@ -18,7 +18,7 @@ Author
 Installation
 ------------
 
-__`diagram`__ package relies on __`webimage`__ package for exporting the graphs to various formats. For more information regarding the latter package, visit ![__webimage__ on GitHub](https://github.com/haghish/webimage). Both packages are installable via GitHub. 
+__`diagram`__ package relies on __`webimage`__ package for exporting the graphs to various formats. For more information regarding the latter package, visit [__webimage__ on GitHub](https://github.com/haghish/webimage). Both packages are installable via GitHub. 
 
 <!--
 The __diagram__ releases are also hosted on SSC server. So you can download the latest release as follows:
@@ -34,9 +34,9 @@ option ensures that you _reinstall_ the package, even if the release date is not
     net install diagram, force  from("https://raw.githubusercontent.com/haghish/diagram/master/")
     net install diagram, force  from("https://raw.githubusercontent.com/haghish/webimage/master/")
     
-For exporting graphical files, the  ![__webimage__](https://github.com/haghish/webimage) package requires [phantomJS](http://phantomjs.org/download.html), 
+For exporting graphical files, the  [__webimage__](https://github.com/haghish/webimage) package requires [phantomJS](http://phantomjs.org/download.html), 
 which is an open-source freeware available for Windows, Mac, and Linux. The 
 path to the executable [phantomJS](http://phantomjs.org/download.html) file is required in order to export the graphical files. However, if the executable file is installed in the default local 
 directory (e.g. `/usr/local/bin/` in Mac), the `phantomjs(str)` can be ignored. 
 
-
+![](banner.png)
