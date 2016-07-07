@@ -1,5 +1,5 @@
 
-*cap prog drop diagramnode  
+  
 prog define diagramnode
 	version 11
 	syntax using/ , tempfile(str)

@@ -2,7 +2,8 @@ d 'DIAGRAM': module for dynamic diagrams
 d
 d  diagram package produces diagrams from DOT markup language. The markup 
 d  language is highly customizable for generating various types of graphs 
-d  for different purposes.  
+d  for different purposes. diagram package can also produce dynamic 
+d  diagrams from Stata data sets, automatically.  
 d
 d KW: DOT
 d KW: markup
@@ -24,4 +25,8 @@ d Support: email haghish@imbi.uni-freiburg.de
 d
 f diagram.ado
 f diagram.sthlp
+f diagramcluster.ado
+f diagramnode.ado
+f makediagram.ado
+f makediagram.sthlp
 F viz.js

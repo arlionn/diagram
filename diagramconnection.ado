@@ -1,5 +1,5 @@
-*cap prog drop diagramconnection    
-prog define diagramconnection  
+  
+prog define diagramconnection
 	
 	version 11
 	syntax using/ , tempfile(str) sign(str) [indent(str)]
@@ -50,22 +50,30 @@ prog define diagramconnection
 		
 		file write `knot' `"    `next'"'
 		
-		local lbl : di label[`i']
-		local prp : di properties[`i']
+		capture confirm variable label
+		if _rc == 0 {
+			local lbl : di label[`i']
+		}
+		
+		capture confirm variable properties
+		if _rc == 0 {
+			local prp : di properties[`i']
+		}
 		
 		//Stata returns a weird error with combining !missing() function, which
 		//made me take this stupid work-around...
 		
-		if !missing(label[`i']) {
+		*if !missing(label[`i']) {
+		if !missing("`lbl'") {
 			local details `"label="`lbl'""' 
 			
 			//add comma
-			if !missing(properties[`i']) {
+			if !missing(`"`prp'"') {
 				local details = `"`details', "'
 			}
 		}	
 		
-		if !missing(properties[`i']) {
+		if !missing(`"`prp'"') {
 			local details = `"`details'"' + `"`prp'"' 
 		}
 

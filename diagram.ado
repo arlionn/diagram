@@ -137,13 +137,12 @@ Department of Mathematics and Computer Science
 University of Southern Denmark     
 haghish@imbi.uni-freiburg.de     
       
-{browse "http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php":http://www.haghish.com/markdoc}   
+[http://www.haghish.com/markdoc](http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php)         
 Package Updates on [Twitter](http://www.twitter.com/Haghish)  
 ***/
 
 
-
-cap prog drop diagram     
+    
 prog define diagram
 	version 11
 	syntax [anything] [using/] , Export(str) [MAGnify(real 1.0)] [replace] 		///
@@ -296,7 +295,7 @@ prog define diagram
 end
 
 
- markdoc diagram.ado, exp(sthlp) replace
+* markdoc diagram.ado, exp(sthlp) replace
 * markdoc diagram.ado, exp(pdf) replace style(stata) title("Dynamic Diagrams in Stata") author("E. F. Haghish") date 
 
 

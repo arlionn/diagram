@@ -94,14 +94,12 @@ _and_
 Department of Mathematics and Computer Science       
 University of Southern Denmark     
 haghish@imbi.uni-freiburg.de     
-      
-{browse "http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php":http://www.haghish.com/markdoc}   
+
+[http://www.haghish.com/markdoc](http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php)         
 Package Updates on [Twitter](http://www.twitter.com/Haghish) 
 ***/
 
-
-
-cap prog drop makediagram     
+    
 prog define makediagram
 	version 11
 	syntax using/ , Export(str) [replace] [GRAPHtype(name)] [label(str)] 		///
@@ -145,83 +143,95 @@ prog define makediagram
 	preserve
 	qui use "`using'", clear
 	
-	if missing(cluster) {
-		file close `knot'
-		diagramconnection using "`using'", tempfile("`tmp'") sign(`sign')
-		file open `knot' using "`tmp'", write append
-	}
+	//Check if cluster variable exists
+	capture confirm variable cluster
 	
-	
-	else {
-		
-		//check if cluster is string 
-		cap confirm string variable cluster
-		if _rc == 0 local clusterisstring 1
-		
-		*if missing("`clusterisstring'") 
-		
-		qui drop if missing(cluster)							//drop missing values
-		
-		*sort cluster
-		tempfile master
-		qui save `master'
-		clear
-		qui use `master'
-		
-		//first evaluate when cluster observation is not missing
-		
-		
-
-		//if cluster is string, the missings come first
-		local current : di cluster[1]
-		while !missing(cluster[1]) {
-			
-			qui keep if cluster == cluster[1]
-				
-			if missing("`clusterisstring'") {
-				local nme : di "`: label (cluster) `=cluster[1]''" // label
-			}	
-			if !missing("`clusterisstring'") {
-				if substr(cluster[1], 1,1) == `"""' {
-					local current : di substr(`"`macval(current)'"',2,.)
-				}
-				if substr(cluster[1], -1,1) == `"""' {
-					local current : di substr(`"`macval(current)'"',1,strlen(`"`macval(current)'"')-1)
-				}
-				local nme `"`macval(current)'"' 					// label
-				
-				//remove white space
-				local current : subinstr local current " " "", all
-			}
-				
-				
-				file write `knot' "    subgraph cluster_`current' {" _n
-				if !missing("`nme'") file write `knot' `"        label="`nme'";"' _n
-				
-				file close `knot' 
-				diagramconnection using "`master'", tempfile("`tmp'") sign(`sign') indent("    ")
-				file open `knot' using "`tmp'", write append
-				file write `knot' "    }" _n
-				
-				qui use `master', clear
-				qui drop if cluster == cluster[1]
-				qui save `master', replace
-				local current : di cluster[1]
+	//if cluster variable exists and it is missing, or if it does not exist:
+	if _rc == 0 {
+		if missing(cluster) {
+			file close `knot'
+			diagramconnection using "`using'", tempfile("`tmp'") sign(`sign')
+			file open `knot' using "`tmp'", write append
 		}
+		else {
+			
+			//check if cluster is string 
+			cap confirm string variable cluster
+			if _rc == 0 local clusterisstring 1
+			
+			*if missing("`clusterisstring'") 
+			
+			qui drop if missing(cluster)							//drop missing values
+			
+			*sort cluster
+			tempfile master
+			qui save `master'
+			clear
+			qui use `master'
+			
+			//first evaluate when cluster observation is not missing
+			
+			
 
-		*else {
-		*	qui drop if missing(cluster)
-		*}
-		
-		//evaluate for observations with missing cluster
-		qui use "`using'", clear
-		
-		//evaluate arguments when cluster is missing
-		qui keep if missing(cluster)
+			//if cluster is string, the missings come first
+			local current : di cluster[1]
+			while !missing(cluster[1]) {
+				
+				qui keep if cluster == cluster[1]
+					
+				if missing("`clusterisstring'") {
+					local nme : di "`: label (cluster) `=cluster[1]''" // label
+				}	
+				if !missing("`clusterisstring'") {
+					if substr(cluster[1], 1,1) == `"""' {
+						local current : di substr(`"`macval(current)'"',2,.)
+					}
+					if substr(cluster[1], -1,1) == `"""' {
+						local current : di substr(`"`macval(current)'"',1,strlen(`"`macval(current)'"')-1)
+					}
+					local nme `"`macval(current)'"' 					// label
+					
+					//remove white space
+					local current : subinstr local current " " "", all
+				}
+					
+					
+					file write `knot' "    subgraph cluster_`current' {" _n
+					if !missing("`nme'") file write `knot' `"        label="`nme'";"' _n
+					
+					file close `knot' 
+					diagramconnection using "`master'", tempfile("`tmp'") sign(`sign') indent("    ")
+					file open `knot' using "`tmp'", write append
+					file write `knot' "    }" _n
+					
+					qui use `master', clear
+					qui drop if cluster == cluster[1]
+					qui save `master', replace
+					local current : di cluster[1]
+			}
+
+			*else {
+			*	qui drop if missing(cluster)
+			*}
+			
+			//evaluate for observations with missing cluster
+			qui use "`using'", clear
+			
+			//evaluate arguments when cluster is missing
+			qui keep if missing(cluster)
+			file close `knot'
+			diagramconnection using "`using'", tempfile("`tmp'") sign(`sign')
+			file open `knot' using "`tmp'", write append
+		}
+	}	
+	
+	//if missing cluster variable...
+	else {
 		file close `knot'
 		diagramconnection using "`using'", tempfile("`tmp'") sign(`sign')
 		file open `knot' using "`tmp'", write append
 	}
+	
 	
 	file close `knot' 
 	diagramnode using "`using'", tempfile("`tmp'") 
@@ -242,7 +252,7 @@ end
 
 
 
-markdoc makediagram.ado, export(sthlp) replace ascii
+* markdoc makediagram.ado, export(sthlp) replace ascii
 * markdoc makediagram.ado, export(pdf) replace style(stata)  linesize(200)
 
 
