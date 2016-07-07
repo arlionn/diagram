@@ -140,8 +140,6 @@ haghish@imbi.uni-freiburg.de
 [http://www.haghish.com/markdoc](http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php)         
 Package Updates on [Twitter](http://www.twitter.com/Haghish)  
 ***/
-
-
     
 prog define diagram
 	version 11
@@ -152,10 +150,40 @@ prog define diagram
 	
 	// Syntax processing
 	// =========================================================================
+	
+	if !missing(`"`macval(anything)'"') {
+		capture local anything: di `anything'
+	}	
+	local anything : di `"'`macval(anything)''"'
+	
+	// check input:
+	if !missing(`"`macval(anything)'"') & missing("`using'") & !missing("`noisily'") {
+		di  _n(2) "{title:input}" _n `"{p}`macval(anything)'"'
+	}
+	
+	// Remowing double quotation from `anything'
+	if !missing(`"`macval(anything)'"') {
+		if substr(`"`macval(anything)'"', 1,1) == `"""' {
+			local anything : di substr(`"`macval(anything)'"',2,.)
+		}
+		if substr(`"`macval(anything)'"', -1,1) == `"""' {
+			local anything : di substr(`"`macval(anything)'"',1,strlen(`"`macval(anything)'"')-1)
+		}
+	}
+	
+	// Magnify option
 	if `magnify' <= 0 {
 		di as err "{bf:magnify} cannot be equal or less than 0"
 		error 198
 	}
+	
+	// Make sure the webimage package is installed 
+	capture quietly findfile webimage.ado
+	if _rc != 0 {
+		di as err "{stata ssc install webimage: the {bf:webimage} package is required}"
+		error 198
+	}
+	
 	
 	local wk : pwd
 	qui cd "`c(sysdir_plus)'v"
@@ -184,7 +212,7 @@ prog define diagram
 	if missing("`phantomjs'") local phantomjs phantomjs
 	else confirm file "`phantomjs'"
 	  
-	local anything : di `"'`macval(anything)''"'
+	
 	
 	// Analyze DOT scripts and data sets
 	// =========================================================================
@@ -297,6 +325,3 @@ end
 
 * markdoc diagram.ado, exp(sthlp) replace
 * markdoc diagram.ado, exp(pdf) replace style(stata) title("Dynamic Diagrams in Stata") author("E. F. Haghish") date 
-
-
-

@@ -24,8 +24,29 @@ diagram graph G {																///
     new -- runmem;																///
     sleep -- runmem;															///
 }																				///
-, magnify(1.2)	export("test.png") replace 							///
+, magnify(1.2)	export("test.png") replace 										///
 phantomjs("/usr/local/bin/phantomjs") engine(neato)												
+
+
+// A BETTER PRACTICE 
+// =================
+diagram "graph G {"																///
+    "run -- intr;"																///
+    "intr -- runbl;"															///
+    "runbl -- run;"																///
+    "run -- kernel;"															///
+    "kernel -- zombie;"															///
+    "kernel -- sleep;"															///
+    "kernel -- runmem;"															///
+    "sleep -- swap;"															///
+    "swap -- runswap;"															///
+    "runswap -- new;"															///
+    "runswap -- runmem;"														///
+    "new -- runmem;"															///
+    "sleep -- runmem;"															///
+"}"																				///
+, magnify(1.2)	export("test.png") replace 										///
+phantomjs("/usr/local/bin/phantomjs") engine(neato)											
 
 
 // -----------------------------------------------------------------------------

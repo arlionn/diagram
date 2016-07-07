@@ -25,7 +25,7 @@ d Support: email haghish@imbi.uni-freiburg.de
 d
 f diagram.ado
 f diagram.sthlp
-f diagramcluster.ado
+f diagramconnection.ado
 f diagramnode.ado
 f makediagram.ado
 f makediagram.sthlp
