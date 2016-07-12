@@ -31,8 +31,8 @@ You can also directly download __diagram__ from GitHub which includes the latest
 To install from GitHub, the `force` 
 option ensures that you _reinstall_ the package, even if the release date is not yet changed. The release date only is changed for new releases and not for the current development.  
   
-    net install diagram, force  from("https://raw.githubusercontent.com/haghish/diagram/master/")
-    net install diagram, force  from("https://raw.githubusercontent.com/haghish/webimage/master/")
+    net install diagram,  force  from("https://raw.githubusercontent.com/haghish/diagram/master/")
+    net install webimage, force  from("https://raw.githubusercontent.com/haghish/webimage/master/")
     
 For exporting graphical files, the  [__webimage__](https://github.com/haghish/webimage) package requires [phantomJS](http://phantomjs.org/download.html), 
 which is an open-source freeware available for Windows, Mac, and Linux. The 
