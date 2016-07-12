@@ -3,7 +3,7 @@
 {title:Title}
 
 {phang}
-{cmd:diagram} {hline 2} {bf:diagram} generates dynamic diagrams using {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language}    {break} and exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. For  more information  {browse "http://www.haghish.com/dot":visit diagram homepage}.
+{cmd:diagram} {hline 2} {bf:diagram} generates dynamic diagrams using {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language}  and exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. For  more information  {browse "http://www.haghish.com/dot":visit diagram homepage}.
 
 
 {title:Syntax}

@@ -2,7 +2,7 @@
 Version: 1.0.0
 Title: diagram
 Description: __diagram__ generates dynamic diagrams using 
-[DOT markup language](http://en.wikipedia.org/wiki/Dot)  
+[DOT markup language](http://en.wikipedia.org/wiki/Dot) 
 and exports images in __pdf__, __png__, __jpeg__, __gif__, and __bmp__ format. For 
 more information [visit diagram homepage](http://www.haghish.com/dot).
 ----------------------------------------------------- DO NOT EDIT THIS LINE ***/
