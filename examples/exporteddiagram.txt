@@ -1,0 +1,8 @@
+digraph G {
+    penwidth="0.1";
+    edge [comment="Wildcard edge",fontname="sans-serif",fontsize=10,colorscheme="greys3",color=2,fontcolor=3];
+    node [fontname="serif",fontsize=13,fillcolor="1", colorscheme="greys3",color="2",fontcolor="4",style="filled"];
+    makediagram ->  diagramconnection;
+    makediagram ->  diagramnode;
+    diagramnode ->  duplicates;
+}

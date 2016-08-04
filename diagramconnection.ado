@@ -2,7 +2,7 @@
 prog define diagramconnection
 	
 	version 11
-	syntax using/ , tempfile(str) sign(str) [indent(str)]
+	syntax [using/] , tempfile(str) sign(str) [indent(str)]
 	
 	
 	tempname knot

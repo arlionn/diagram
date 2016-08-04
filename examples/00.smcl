@@ -1,0 +1,932 @@
+{smcl}
+{com}{sf}{ul off}
+. diagram using cluster.gv, export(cluster.pdf)  replace
+{txt}{hline 84} begin diagram {hline}
+- version 11
+- syntax [anything] [using/] , [Export(str)] [MAGnify(real 1.0)] [replace] [phantomjs(str)] [install] [engine(name)] [Noisily]
+- if substr(trim(`"`macval(0)'"'),1,7) == "setpath" {c -(}
+= if substr(trim(`"using cluster.gv, export(cluster.pdf)  replace"'),1,7) == "setpath" {c -(}
+  local 0 : subinstr local 0 "setpath" ""
+  confirm file `0'
+  tempfile diagrampath
+  tempname knot
+  qui file open `knot' using "`diagrampath'", write text replace
+  file write `knot' "program define diagrampath" _n
+  file write `knot' `"    global diagrampath `macval(0)'"' _n
+  file write `knot' "end" _n
+  qui file close `knot'
+  qui copy "`diagrampath'" "`c(sysdir_plus)'d/diagrampath.ado", replace
+  exit
+  {c )-}
+- else if missing("`export'") {c -(}
+= else if missing("cluster.pdf") {c -(}
+  di as err "the {c -(}bf:export{c )-} option is required"
+  err 198
+  {c )-}
+- capture prog drop diagrampath
+- capture diagrampath
+  {hline 78} begin diagrampath {hline}
+  - global diagrampath "/Applications/phantomjs/bin/phantomjs"
+  {hline 80} end diagrampath {hline}
+- if !missing(`"`macval(anything)'"') {c -(}
+= if !missing(`""') {c -(}
+  capture local anything: di `anything'
+  {c )-}
+- local anything : di `"'`macval(anything)''"'
+= local anything : di `"''"'
+- if !missing(`"`macval(anything)'"') & missing("`using'") & !missing("`noisily'") {c -(}
+= if !missing(`"''"') & missing("cluster.gv") & !missing("") {c -(}
+  di _n(2) "{c -(}title:input{c )-}" _n `"{c -(}p{c )-}`macval(anything)'"'
+  {c )-}
+- if !missing(`"`macval(anything)'"') {c -(}
+= if !missing(`"''"') {c -(}
+- if substr(`"`macval(anything)'"', 1,1) == `"""' {c -(}
+= if substr(`"''"', 1,1) == `"""' {c -(}
+  local anything : di substr(`"`macval(anything)'"',2,.)
+  {c )-}
+- if substr(`"`macval(anything)'"', -1,1) == `"""' {c -(}
+= if substr(`"''"', -1,1) == `"""' {c -(}
+  local anything : di substr(`"`macval(anything)'"',1,strlen(`"`macval(anything)'"')-1)
+  {c )-}
+- {c )-}
+- if `magnify' <= 0 {c -(}
+= if 1 <= 0 {c -(}
+  di as err "{c -(}bf:magnify{c )-} cannot be equal or less than 0"
+  error 198
+  {c )-}
+- capture quietly findfile webimage.ado
+  {hline 81} begin findfile {hline}
+  - version 8
+  - gettoken fn 0 : 0, parse(" ,")
+  - syntax [, ALL noDEScend PATH(string)]
+  - if `"`path'"'=="" {c -(}
+  = if `""'=="" {c -(}
+  - local path `"`c(adopath)'"'
+  = local path `"BASE;SITE;.;PERSONAL;PLUS;OLDPLACE"'
+  - {c )-}
+  - local n 0
+  - local subdir : adosubdir `"`fn'"'
+  = local subdir : adosubdir `"webimage.ado"'
+  - if `"`subdir'"' != "" {c -(}
+  = if `"w"' != "" {c -(}
+  - gettoken d path : path, parse(";")
+  - while `"`d'"'!="" {c -(}
+  = while `"BASE"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `"BASE"' != ";" {c -(}
+  - local d : sysdir `"`d'"'
+  = local d : sysdir `"BASE"'
+  - local ffn `"`d'`fn'"'
+  = local ffn `"/Applications/Stata/ado/base/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"/Applications/Stata/ado/base/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+  - if "`descend'"=="" {c -(}
+  = if ""=="" {c -(}
+  - local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+  = local ffn `"/Applications/Stata/ado/base/w/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"/Applications/Stata/ado/base/w/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+  - {c )-}
+  - {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `";"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `";"' != ";" {c -(}
+    local d : sysdir `"`d'"'
+    local ffn `"`d'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+    if "`descend'"=="" {c -(}
+    local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+    {c )-}
+    {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `"SITE"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `"SITE"' != ";" {c -(}
+  - local d : sysdir `"`d'"'
+  = local d : sysdir `"SITE"'
+  - local ffn `"`d'`fn'"'
+  = local ffn `"/Applications/Stata/ado/site/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"/Applications/Stata/ado/site/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+  - if "`descend'"=="" {c -(}
+  = if ""=="" {c -(}
+  - local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+  = local ffn `"/Applications/Stata/ado/site/w/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"/Applications/Stata/ado/site/w/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+  - {c )-}
+  - {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `";"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `";"' != ";" {c -(}
+    local d : sysdir `"`d'"'
+    local ffn `"`d'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+    if "`descend'"=="" {c -(}
+    local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+    {c )-}
+    {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `"."'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `"."' != ";" {c -(}
+  - local d : sysdir `"`d'"'
+  = local d : sysdir `"."'
+  - local ffn `"`d'`fn'"'
+  = local ffn `"./webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"./webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+  - if "`descend'"=="" {c -(}
+  = if ""=="" {c -(}
+  - local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+  = local ffn `"./w/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"./w/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+  - {c )-}
+  - {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `";"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `";"' != ";" {c -(}
+    local d : sysdir `"`d'"'
+    local ffn `"`d'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+    if "`descend'"=="" {c -(}
+    local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+    {c )-}
+    {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `"PERSONAL"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `"PERSONAL"' != ";" {c -(}
+  - local d : sysdir `"`d'"'
+  = local d : sysdir `"PERSONAL"'
+  - local ffn `"`d'`fn'"'
+  = local ffn `"~/Library/Application Support/Stata/ado/personal/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"~/Library/Application Support/Stata/ado/personal/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+  - if "`descend'"=="" {c -(}
+  = if ""=="" {c -(}
+  - local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+  = local ffn `"~/Library/Application Support/Stata/ado/personal/w/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"~/Library/Application Support/Stata/ado/personal/w/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+  - {c )-}
+  - {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `";"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `";"' != ";" {c -(}
+    local d : sysdir `"`d'"'
+    local ffn `"`d'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+    if "`descend'"=="" {c -(}
+    local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+    capture confirm file `"`ffn'"'
+    if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `"`ffn'"'
+    local n 1
+    {c )-}
+    {c )-}
+    {c )-}
+  - gettoken d path : path, parse(" ;")
+  - {c )-}
+  - while `"`d'"'!="" {c -(}
+  = while `"PLUS"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `"PLUS"' != ";" {c -(}
+  - local d : sysdir `"`d'"'
+  = local d : sysdir `"PLUS"'
+  - local ffn `"`d'`fn'"'
+  = local ffn `"~/Library/Application Support/Stata/ado/plus/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"~/Library/Application Support/Stata/ado/plus/webimage.ado"'
+  - if _rc==0 {c -(}
+    di as txt `"`ffn'"'
+    if "`all'"=="" {c -(}
+    ret local fn `"`ffn'"'
+    exit
+    {c )-}
+    if `n' {c -(}
+    ret local fn `"`return(fn)' "`ffn'""'
+    {c )-}
+    else ret local fn `""`ffn'""'
+    local n 1
+    {c )-}
+  - if "`descend'"=="" {c -(}
+  = if ""=="" {c -(}
+  - local ffn `"`d'`subdir'`c(dirsep)'`fn'"'
+  = local ffn `"~/Library/Application Support/Stata/ado/plus/w/webimage.ado"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"~/Library/Application Support/Stata/ado/plus/w/webimage.ado"'
+  - if _rc==0 {c -(}
+  - di as txt `"`ffn'"'
+  = di as txt `"~/Library/Application Support/Stata/ado/plus/w/webimage.ado"'
+  - if "`all'"=="" {c -(}
+  = if ""=="" {c -(}
+  - ret local fn `"`ffn'"'
+  = ret local fn `"~/Library/Application Support/Stata/ado/plus/w/webimage.ado"'
+  - exit
+  {hline 83} end findfile {hline}
+- if _rc != 0 {c -(}
+  di as err "{c -(}stata ssc install webimage: the {c -(}bf:webimage{c )-} package is required{c )-}"
+  error 198
+  {c )-}
+- local wk : pwd
+- qui cd "`c(sysdir_plus)'v"
+= qui cd "~/Library/Application Support/Stata/ado/plus/v"
+- local here : pwd
+- capture findfile viz.js, path("`here'")
+= capture findfile viz.js, path("/Users/haghish/Library/Application Support/Stata/ado/plus/v")
+  {hline 81} begin findfile {hline}
+  - version 8
+  - gettoken fn 0 : 0, parse(" ,")
+  - syntax [, ALL noDEScend PATH(string)]
+  - if `"`path'"'=="" {c -(}
+  = if `"/Users/haghish/Library/Application Support/Stata/ado/plus/v"'=="" {c -(}
+    local path `"`c(adopath)'"'
+    {c )-}
+  - local n 0
+  - local subdir : adosubdir `"`fn'"'
+  = local subdir : adosubdir `"viz.js"'
+  - if `"`subdir'"' != "" {c -(}
+  = if `"v"' != "" {c -(}
+  - gettoken d path : path, parse(";")
+  - while `"`d'"'!="" {c -(}
+  = while `"/Users/haghish/Library/Application Support/Stata/ado/plus/v"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `"/Users/haghish/Library/Application Support/Stata/ado/plus/v"' != ";" {c -(}
+  - local d : sysdir `"`d'"'
+  = local d : sysdir `"/Users/haghish/Library/Application Support/Stata/ado/plus/v"'
+  - local ffn `"`d'`fn'"'
+  = local ffn `"/Users/haghish/Library/Application Support/Stata/ado/plus/v/viz.js"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"/Users/haghish/Library/Application Support/Stata/ado/plus/v/viz.js"'
+  - if _rc==0 {c -(}
+  - di as txt `"`ffn'"'
+  = di as txt `"/Users/haghish/Library/Application Support/Stata/ado/plus/v/viz.js"'
+  - if "`all'"=="" {c -(}
+  = if ""=="" {c -(}
+  - ret local fn `"`ffn'"'
+  = ret local fn `"/Users/haghish/Library/Application Support/Stata/ado/plus/v/viz.js"'
+  - exit
+  {hline 83} end findfile {hline}
+- if _rc != 0 {c -(}
+  di as err "graphViz javascript not found. Please reinstall {c -(}help diagram{c )-}"
+  error 198
+  {c )-}
+- else local javascript "`r(fn)'"
+= else local javascript "/Users/haghish/Library/Application Support/Stata/ado/plus/v/viz.js"
+- qui cd "`c(sysdir_plus)'d"
+= qui cd "~/Library/Application Support/Stata/ado/plus/d"
+- local here : pwd
+- capture findfile diagram.js, path("`here'")
+= capture findfile diagram.js, path("/Users/haghish/Library/Application Support/Stata/ado/plus/d")
+  {hline 81} begin findfile {hline}
+  - version 8
+  - gettoken fn 0 : 0, parse(" ,")
+  - syntax [, ALL noDEScend PATH(string)]
+  - if `"`path'"'=="" {c -(}
+  = if `"/Users/haghish/Library/Application Support/Stata/ado/plus/d"'=="" {c -(}
+    local path `"`c(adopath)'"'
+    {c )-}
+  - local n 0
+  - local subdir : adosubdir `"`fn'"'
+  = local subdir : adosubdir `"diagram.js"'
+  - if `"`subdir'"' != "" {c -(}
+  = if `"d"' != "" {c -(}
+  - gettoken d path : path, parse(";")
+  - while `"`d'"'!="" {c -(}
+  = while `"/Users/haghish/Library/Application Support/Stata/ado/plus/d"'!="" {c -(}
+  - if `"`d'"' != ";" {c -(}
+  = if `"/Users/haghish/Library/Application Support/Stata/ado/plus/d"' != ";" {c -(}
+  - local d : sysdir `"`d'"'
+  = local d : sysdir `"/Users/haghish/Library/Application Support/Stata/ado/plus/d"'
+  - local ffn `"`d'`fn'"'
+  = local ffn `"/Users/haghish/Library/Application Support/Stata/ado/plus/d/diagram.js"'
+  - capture confirm file `"`ffn'"'
+  = capture confirm file `"/Users/haghish/Library/Application Support/Stata/ado/plus/d/diagram.js"'
+  - if _rc==0 {c -(}
+  - di as txt `"`ffn'"'
+  = di as txt `"/Users/haghish/Library/Application Support/Stata/ado/plus/d/diagram.js"'
+  - if "`all'"=="" {c -(}
+  = if ""=="" {c -(}
+  - ret local fn `"`ffn'"'
+  = ret local fn `"/Users/haghish/Library/Application Support/Stata/ado/plus/d/diagram.js"'
+  - exit
+  {hline 83} end findfile {hline}
+- if _rc != 0 {c -(}
+  di as err "diagram.js javascript not found. Please reinstall {c -(}help diagram{c )-}"
+  error 198
+  {c )-}
+- else local command "`r(fn)'"
+= else local command "/Users/haghish/Library/Application Support/Stata/ado/plus/d/diagram.js"
+- qui cd "`wk'"
+= qui cd "/Users/haghish/Documents/Packages/diagram/examples"
+- if missing("`phantomjs'") {c -(}
+= if missing("") {c -(}
+- if !missing("$diagrampath") local phantomjs $diagrampath
+= if !missing("/Applications/phantomjs/bin/phantomjs") local phantomjs /Applications/phantomjs/bin/phantomjs
+- else {c -(}
+  di as err "path to phantomJS software is required"
+  error 198
+  {c )-}
+- {c )-}
+- confirm file "`phantomjs'"
+= confirm file "/Applications/phantomjs/bin/phantomjs"
+- if !missing("`using'") {c -(}
+= if !missing("cluster.gv") {c -(}
+- tempfile tmp
+- quietly copy "`using'" "`tmp'", replace
+= quietly copy "cluster.gv" "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000001", replace
+- tempname hitch
+- qui file open `hitch' using "`tmp'", read
+= qui file open __000000 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000001", read
+- file read `hitch' line
+= file read __000000 line
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"digraph G {c -(}"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `""' + `"digraph G {c -(}"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    subgraph cluster_1 {c -(}"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}"' + `"    subgraph cluster_1 {c -(}"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        label="process #1";"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}"' + `"        label="process #1";"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        0 -> 1;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";"' + `"        0 -> 1;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        1 -> 2;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;"' + `"        1 -> 2;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        2 -> 3;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;"' + `"        2 -> 3;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    {c )-}"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;"' + `"    {c )-}"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    subgraph cluster_2 {c -(}"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}"' + `"    subgraph cluster_2 {c -(}"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        label="process #2";"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}"' + `"        label="process #2";"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        10 -> 11;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";"' + `"        10 -> 11;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        11 -> 12;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;"' + `"        11 -> 12;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"        12 -> 13;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;"' + `"        12 -> 13;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    {c )-}"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;"' + `"    {c )-}"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    98 -> 0;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}"' + `"    98 -> 0;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    98 -> 10;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;"' + `"    98 -> 10;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    1 -> 13;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;"' + `"    1 -> 13;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    12 -> 3;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;"' + `"    12 -> 3;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    3 -> 0;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;"' + `"    3 -> 0;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    3 -> 99;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;"' + `"    3 -> 99;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    13 -> 99;"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;"' + `"    13 -> 99;"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    0 [label="A0"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;"' + `"    0 [label="A0"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    1 [label="A1"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];"' + `"    1 [label="A1"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    2 [label="A2"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];"' + `"    2 [label="A2"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    10 [label="B0"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];"' + `"    10 [label="B0"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    11 [label="B1"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];"' + `"    11 [label="B1"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    12 [label="B2"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];"' + `"    12 [label="B2"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    98 [label="start"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];"' + `"    98 [label="start"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    3 [label="A3"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];    98 [label="start"];"' + `"    3 [label="A3"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    13 [label="B3"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];    98 [label="start"];    3 [label="A3"];"' + `"    13 [label="B3"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"    99 [label="end"];"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];    98 [label="start"];    3 [label="A3"];    13 [label="B3"];"' + `"    99 [label="end"];"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+- if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+= if substr(`"{c )-}"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+- local source = `"`macval(source)'"' + `"`macval(line)'"'
+= local source = `"digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];    98 [label="start"];    3 [label="A3"];    13 [label="B3"];    99 [label="end"];"' + `"{c )-}"'
+- file read `hitch' line
+= file read __000000 line
+- {c )-}
+- while r(eof)==0 {c -(}
+  if substr(`"`macval(line)'"',1,1) == "#" {c -(}
+  file read `hitch' line
+  {c )-}
+  local source = `"`macval(source)'"' + `"`macval(line)'"'
+  file read `hitch' line
+  {c )-}
+- local anything `"'`macval(source)''"'
+= local anything `"'digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];    98 [label="start"];    3 [label="A3"];    13 [label="B3"];    99 [label="end"];{c )-}'"'
+- {c )-}
+- if missing("`engine'") {c -(}
+= if missing("") {c -(}
+- cap tokenize `"`anything'"'
+= cap tokenize `"'digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];    98 [label="start"];    3 [label="A3"];    13 [label="B3"];    99 [label="end"];{c )-}'"'
+- if `"`1'"' == `"graph"' local engine neato
+= if `"'digraph"' == `"graph"' local engine neato
+- {c )-}
+- if !missing("`engine'") {c -(}
+= if !missing("") {c -(}
+  local anything `"`macval(anything)',{c -(} engine: "`engine'" {c )-}"'
+  {c )-}
+- if "`engine'" != "dot" & "`engine'" != "neato" & "`engine'" != "fdp" & "`engine'" != "circo" & "`engine'" != "osage" & "`engine'" != "twopi" & !missing("`engine'") {c -(}
+= if "" != "dot" & "" != "neato" & "" != "fdp" & "" != "circo" & "" != "osage" & "" != "twopi" & !missing("") {c -(}
+  di as err "{c -(}bf:engine{c )-} not recognized"
+  error 198
+  {c )-}
+- if missing("`replace'") {c -(}
+= if missing("replace") {c -(}
+  capture findfile "`export'"
+  if _rc == 0 {c -(}
+  di as err "`export' already exists. use the {c -(}bf:replace{c )-} option"
+  error 198
+  {c )-}
+  {c )-}
+- tempfile tmp
+- tempname hitch knot
+- qui file open `knot' using `"`tmp'"', write replace
+= qui file open __000002 using `"/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000002"', write replace
+- file write `knot' "<!doctype html>" _n "<html>" _n `"<script type="text/javascript" src="`javascript'"></script>"' _n `"<style type="text/css">"' _n "body {c -(}zoom:`magnify';{c )-}" _n "</style>" _n "</head>" _n "<body>" _n "<script>" _n "document.body.innerHTML += Viz(" _n `"`macval(anything)'"' _n ");" _n "</script>" _n "</body>" _n "</html>" _n
+= file write __000002 "<!doctype html>" _n "<html>" _n `"<script type="text/javascript" src="/Users/haghish/Library/Application Support/Stata/ado/plus/v/viz.js"></script>"' _n `"<style type="text/css">"' _n "body {c -(}zoom:1;{c )-}" _n "</style>" _n "</head>" _n "<body>" _n "<script>" _n "document.body.innerHTML += Viz(" _n `"'digraph G {c -(}    subgraph cluster_1 {c -(}        label="process #1";        0 -> 1;        1 -> 2;        2 -> 3;    {c )-}    subgraph cluster_2 {c -(}        label="process #2";        10 -> 11;        11 -> 12;        12 -> 13;    {c )-}    98 -> 0;    98 -> 10;    1 -> 13;    12 -> 3;    3 -> 0;    3 -> 99;    13 -> 99;    0 [label="A0"];    1 [label="A1"];    2 [label="A2"];    10 [label="B0"];    11 [label="B1"];    12 [label="B2"];    98 [label="start"];    3 [label="A3"];    13 [label="B3"];    99 [label="end"];{c )-}'"' _n ");" _n "</script>" _n "</body>" _n "</html>" _n
+- file close `knot'
+= file close __000002
+- if index(lower("`export'"),".png") == 0 & index(lower("`export'"),".jpeg") == 0 & index(lower("`export'"),".bmp") == 0 & index(lower("`export'"),".gif") == 0 & index(lower("`export'"),".pdf") == 0 {c -(}
+= if index(lower("cluster.pdf"),".png") == 0 & index(lower("cluster.pdf"),".jpeg") == 0 & index(lower("cluster.pdf"),".bmp") == 0 & index(lower("cluster.pdf"),".gif") == 0 & index(lower("cluster.pdf"),".pdf") == 0 {c -(}
+  di as err "unsupported file format. see {c -(}help diagram{c )-}"
+  error 198
+  {c )-}
+- qui copy "`tmp'" "_tmp_file_000.html", replace
+= qui copy "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000002" "_tmp_file_000.html", replace
+- ! "`phantomjs'" "`command'" "_tmp_file_000.html" "`export'"
+= ! "/Applications/phantomjs/bin/phantomjs" "/Users/haghish/Library/Application Support/Stata/ado/plus/d/diagram.js" "_tmp_file_000.html" "cluster.pdf"
+
+- if missing("`noisily'") capture qui erase "_tmp_file_000.html"
+= if missing("") capture qui erase "_tmp_file_000.html"
+- cap confirm file "`export'"
+= cap confirm file "cluster.pdf"
+- if _rc == 0 {c -(}
+- di as txt "{c -(}p{c )-}({c -(}bf:diagram{c )-} created "`"{c -(}bf:{c -(}browse "`export'"{c )-}{c )-})"' _n
+= di as txt "{c -(}p{c )-}({c -(}bf:diagram{c )-} created "`"{c -(}bf:{c -(}browse "cluster.pdf"{c )-}{c )-})"' _n
+{p}({bf:diagram} created {bf:{browse "cluster.pdf"}})
+
+- {c )-}
+- else display as err "diagram could not produce `export'" _n
+= else display as err "diagram could not produce cluster.pdf" _n
+{hline 86} end diagram {hline}
+
+{com}. qui log c
+{smcl}
+{com}{sf}{ul off}

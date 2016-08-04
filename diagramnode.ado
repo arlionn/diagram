@@ -2,13 +2,13 @@
   
 prog define diagramnode
 	version 11
-	syntax using/ , tempfile(str)
+	syntax [using/] , tempfile(str)
 
 	tempname knot
 	file open `knot' using "`tempfile'", write append
 	
 	preserve 
-	quietly use "`using'", clear
+	if !missing("`using'") quietly use "`using'", clear
 	
 	//make sure variable type is not string
 	cap confirm string variable from
@@ -31,8 +31,9 @@ prog define diagramnode
 	}
 	
 	restore
+	
 	preserve 
-	quietly use "`using'", clear
+	if !missing("`using'") quietly use "`using'", clear
 	
 	forval i = 1 / `c(N)' {
 		local jump 0									// reset

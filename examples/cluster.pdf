@@ -1,0 +1,31 @@
+digraph G {
+    subgraph cluster_1 {
+        label="process #1";
+        0 -> 1;
+        1 -> 2;
+        2 -> 3;
+    }
+    subgraph cluster_2 {
+        label="process #2";
+        10 -> 11;
+        11 -> 12;
+        12 -> 13;
+    }
+    98 -> 0;
+    98 -> 10;
+    1 -> 13;
+    12 -> 3;
+    3 -> 0;
+    3 -> 99;
+    13 -> 99;
+    0 [label="A0"];
+    1 [label="A1"];
+    2 [label="A2"];
+    10 [label="B0"];
+    11 [label="B1"];
+    12 [label="B2"];
+    98 [label="start"];
+    3 [label="A3"];
+    13 [label="B3"];
+    99 [label="end"];
+}

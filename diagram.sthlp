@@ -3,14 +3,18 @@
 {title:Title}
 
 {phang}
-{cmd:diagram} {hline 2} {bf:diagram} generates dynamic diagrams using {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language}  and exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. For  more information  {browse "http://www.haghish.com/dot":visit diagram homepage}.
-
+{cmd:diagram} {hline 2} implements  {browse "http://www.graphviz.org/":Graphviz} in Stata and generates dynamic diagrams using 
+ {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language} 
+ and exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. 
+ The package also includes several programs that generate automatic path diagrams. For 
+ more information  {browse "http://www.haghish.com/diagram/diagram.php":visit diagram homepage}.
+ 
 
 {title:Syntax}
 
 {p 8 16 2}
-{cmd: diagram} [{it:DOT} | {help using} {it:filename}] [{cmd:,} 
-{it:replace} {it:export(filename)} {it:magnify(real)} {it:phantomjs(str)} {it:engine(name)} ]
+{cmd: diagram} {{it:DOT} | {help using} {it:filename}} {cmd:,} {it:export(filename)} 
+[{it:replace}  {it:magnify(real)} {it:phantomjs(str)} {it:engine(name)} ]
 {p_end}
 
 {* the new Stata help format of putting detail before generality}{...}
@@ -20,7 +24,7 @@
 {synopt:{opt replace}}replace the exported diagram{p_end}
 {synopt:{opt engine(name)}}specifies the    {break}
 {browse "http://www.graphviz.org/Download.php":graphViz} engine for rendering the 
-diagram which can be {bf:dot}, {bf:osage}, {bf:circo}, {bf:neato}, {bf:twopi} and {bf:fdp}s. 
+diagram which can be {bf:dot}, {bf:osage}, {bf:circo}, {bf:neato}, {bf:twopi} and {bf:fdp}. 
 The default engine is {bf:dot} {p_end}
 {synopt:{opt e:xport(filename)}}export the diagram. The file extension specifies the 
 format and it can be {bf:.pdf}, {bf:.png}, {bf:.jpeg}, {bf:.gif}, or {bf:.bmp}{p_end}
@@ -32,6 +36,26 @@ by default is {bf:1.0}{p_end}
 {synoptline}
 {p2colreset}{...}
 
+
+
+{title:Example programs}
+
+{p 4 4 2}
+The package includes several example programs that generate DOT path diagrams 
+that can be rendered using the {bf:diagram} command. These programs can be used to 
+visualize a function call of an ado-program, generate path diagram from data set, 
+and also create dynamic SEM models (prototype development). These example programs 
+are documented in separate help files:
+
+{* the new Stata help format of putting detail before generality}{...}
+{synoptset 20 tabbed}{...}
+{synopthdr:Example program}
+{synoptline}
+{synopt:{help semdiagram}}draws dynamic SEM models{p_end}
+{synopt:{help makediagram}}generates DOT path diagram from data set{p_end}
+{synopt:{help calldiagram}}visualizes the function calls of an ado-program{p_end}
+{synoptline}
+{p2colreset}{...}
 
 
 {title:Description}
@@ -139,4 +163,9 @@ haghish@imbi.uni-freiburg.de       {break}
 {p 4 4 2}
 {browse "http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php":http://www.haghish.com/markdoc}           {break}
 Package Updates on  {browse "http://www.twitter.com/Haghish":Twitter}    {break}
+
+    {hline}
+
+{p 4 4 2}
+This help file was dynamically produced by {help markdoc:MarkDoc Literate Programming package}
 

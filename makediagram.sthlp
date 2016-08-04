@@ -2,27 +2,25 @@
 {title:Title}
 
 {phang}
-{cmd:makediagram} {hline 2} generates DOT diagram file from data sets
-
+{cmd:makediagram} {hline 2} generates DOT diagram file from data sets 
 
 {title:Syntax}
 
 {p 8 16 2}
-{cmd: makediagram} {help using} {it:filename} [{cmd:,} 
-{it:replace} {it:export(filename)} {it:graphtype(name)} {it:label(str)} 
-{it:style(str)} ]
+{cmd: makediagram} [{help using} {it:filename}] {cmd:,} 
+{it:export(filename)} [ {it:replace} {it:graphtype(name)} 
+{it:style(filename)} ]
 {p_end}
 
 {* the new Stata help format of putting detail before generality}{...}
 {synoptset 20 tabbed}{...}
 {synopthdr}
 {synoptline}
-{synopt:{opt replace}}replace the exported DOT file{p_end}
-{synopt:{opt graphtype(name)}}specifies the    {break}
-type of the graph which can be {bf:digraph} (default) or {bf:graph} (i.e. undirected). {p_end}
 {synopt:{opt e:xport(filename)}}export the DOT diagram file. {p_end}
-{synopt:{opt label(str)}}specifies the label of the graph{p_end}
-{synopt:{opt style(str)}}appends a DOT style sheet to the DOT file{p_end}
+{synopt:{opt graphtype(name)}}specifies the type of the graph which can 
+be {bf:digraph} (default) or {bf:graph} (i.e. undirected). {p_end}
+{synopt:{opt replace}}replace the exported DOT file{p_end}
+{synopt:{opt style(filename)}}appends an external DOT style sheet to the DOT file.{p_end}
 {synoptline}
 {p2colreset}{...}
 
@@ -105,4 +103,9 @@ haghish@imbi.uni-freiburg.de       {break}
 {p 4 4 2}
 {browse "http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php":http://www.haghish.com/markdoc}           {break}
 Package Updates on  {browse "http://www.twitter.com/Haghish":Twitter} 
+
+    {hline}
+
+{p 4 4 2}
+This help file was dynamically produced by {help markdoc:MarkDoc Literate Programming package}
 

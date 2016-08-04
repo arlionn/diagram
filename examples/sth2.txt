@@ -1,0 +1,16 @@
+ begin makediagram
+ begin clear
+ begin label
+ end label
+ end clear
+ begin diagramconnection
+ end diagramconnection
+ begin diagramconnection
+ end diagramconnection
+ begin diagramconnection
+ end diagramconnection
+ begin diagramnode
+ begin duplicates
+ end duplicates
+ end diagramnode
+ end makediagram

@@ -9,21 +9,20 @@ Syntax
 ======
 
 {p 8 16 2}
-{cmd: makediagram} {help using} {it:filename} [{cmd:,} 
-{it:replace} {it:export(filename)} {it:graphtype(name)} {it:label(str)} 
-{it:style(str)} ]
+{cmd: makediagram} [{help using} {it:filename}] {cmd:,} 
+{it:export(filename)} [ {it:replace} {it:graphtype(name)} 
+{it:style(filename)} ]
 {p_end}
 
 {* the new Stata help format of putting detail before generality}{...}
 {synoptset 20 tabbed}{...}
 {synopthdr}
 {synoptline}
-{synopt:{opt replace}}replace the exported DOT file{p_end}
-{synopt:{opt graphtype(name)}}specifies the  
-type of the graph which can be {bf:digraph} (default) or {bf:graph} (i.e. undirected). {p_end}
 {synopt:{opt e:xport(filename)}}export the DOT diagram file. {p_end}
-{synopt:{opt label(str)}}specifies the label of the graph{p_end}
-{synopt:{opt style(str)}}appends a DOT style sheet to the DOT file{p_end}
+{synopt:{opt graphtype(name)}}specifies the type of the graph which can 
+be {bf:digraph} (default) or {bf:graph} (i.e. undirected). {p_end}
+{synopt:{opt replace}}replace the exported DOT file{p_end}
+{synopt:{opt style(filename)}}appends an external DOT style sheet to the DOT file.{p_end}
 {synoptline}
 {p2colreset}{...}
 
@@ -97,37 +96,47 @@ haghish@imbi.uni-freiburg.de
 
 [http://www.haghish.com/markdoc](http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php)         
 Package Updates on [Twitter](http://www.twitter.com/Haghish) 
+
+- - -
+
+This help file was dynamically produced by {help markdoc:MarkDoc Literate Programming package}
 ***/
 
-    
+cap prog drop makediagram    
 prog define makediagram
 	version 11
-	syntax using/ , Export(str) [replace] [GRAPHtype(name)] [label(str)] 		///
+	syntax [using/] , Export(str) [replace] [GRAPHtype(name)]  		///
 	[style(str)]
 	
-
-	// Analyze DOT scripts and data sets
+	// -------------------------------------------------------------------------
+	// Make sure the data is .dta; initiate the diagram text file
 	// =========================================================================
 	if !missing("`using'") {
-		if (index(lower("`using'"),".dta")) {
-			if "`graphtype'" == "graph" {
-				local source "graph G {"
-				local sign --
-			}
-			else  {   //if "`graphtype'" == "digraph"
-				local source "digraph G {"
-				local sign ->
-			}
+		if (!index(lower("`using'"),".dta")) {
+			di as err "specified data is not supported"
+			err 198
 		}
 	}
+	if "`graphtype'" == "graph" {
+		local source "graph G {"
+		local sign --
+	}
+	else if "`graphtype'" == "digraph" | missing("`graphtype'") {
+		local source "digraph G {"
+		local sign ->
+	}
+	else {
+		di as err "{bf:graphtype} invalid"
+		err 198
+	}
+	
 	tempfile tmp
 	tempname knot
 	qui file open `knot' using "`tmp'", write replace
 	file write `knot' "`source'" _n
-	
-	// adding label
-	if !missing("`label'") file write `knot' `"    label="`label'";"' _n
-	
+
+	// adding external style
+	// -------------------------------------------------------------------------
 	if !missing("`style'") {
 		confirm file "`style'"
 		tempname hitch 
@@ -140,17 +149,28 @@ prog define makediagram
 		}
 	}
 	
-	preserve
-	qui use "`using'", clear
 	
-	//Check if cluster variable exists
+	// -------------------------------------------------------------------------
+	// Loading the specified data set, if specified
+	// =========================================================================
+	if !missing("`using'") {
+		preserve
+		qui use "`using'", clear
+	}
+	
+	// -------------------------------------------------------------------------
+	// Testing the data set variables
+	// =========================================================================
+	
+	// Check if cluster variable exists:
+	// IF cluster variable exists and it is missing, OR IF it does not exist:
+	// ELSE if it exists and not missing:
+	// -------------------------------------------------------------------------
 	capture confirm variable cluster
-	
-	//if cluster variable exists and it is missing, or if it does not exist:
 	if _rc == 0 {
 		if missing(cluster) {
 			file close `knot'
-			diagramconnection using "`using'", tempfile("`tmp'") sign(`sign')
+			diagramconnection , tempfile("`tmp'") sign(`sign')
 			file open `knot' using "`tmp'", write append
 		}
 		else {
@@ -158,9 +178,6 @@ prog define makediagram
 			//check if cluster is string 
 			cap confirm string variable cluster
 			if _rc == 0 local clusterisstring 1
-			
-			*if missing("`clusterisstring'") 
-			
 			qui drop if missing(cluster)							//drop missing values
 			
 			*sort cluster
@@ -170,10 +187,8 @@ prog define makediagram
 			qui use `master'
 			
 			//first evaluate when cluster observation is not missing
-			
-			
-
 			//if cluster is string, the missings come first
+			
 			local current : di cluster[1]
 			while !missing(cluster[1]) {
 				
@@ -200,7 +215,7 @@ prog define makediagram
 					if !missing("`nme'") file write `knot' `"        label="`nme'";"' _n
 					
 					file close `knot' 
-					diagramconnection using "`master'", tempfile("`tmp'") sign(`sign') indent("    ")
+					diagramconnection , tempfile("`tmp'") sign(`sign') indent("    ")
 					file open `knot' using "`tmp'", write append
 					file write `knot' "    }" _n
 					
@@ -215,12 +230,15 @@ prog define makediagram
 			*}
 			
 			//evaluate for observations with missing cluster
-			qui use "`using'", clear
+			*qui use "`using'", clear
+			if !missing("`using'") {
+				qui use "`using'", clear
+			}
 			
 			//evaluate arguments when cluster is missing
 			qui keep if missing(cluster)
 			file close `knot'
-			diagramconnection using "`using'", tempfile("`tmp'") sign(`sign')
+			diagramconnection , tempfile("`tmp'") sign(`sign')
 			file open `knot' using "`tmp'", write append
 		}
 	}	
@@ -228,20 +246,21 @@ prog define makediagram
 	//if missing cluster variable...
 	else {
 		file close `knot'
-		diagramconnection using "`using'", tempfile("`tmp'") sign(`sign')
+		diagramconnection , tempfile("`tmp'") sign(`sign')
 		file open `knot' using "`tmp'", write append
 	}
 	
 	
 	file close `knot' 
-	diagramnode using "`using'", tempfile("`tmp'") 
+	if !missing("`using'") local use using "`using'"
+	diagramnode `use' , tempfile("`tmp'") 
 	file open `knot' using "`tmp'", write append
 			
 	file write `knot' "}" _n
 	file close `knot'
 	copy "`tmp'" "`export'", `replace'
 	
-	restore
+	if !missing("`using'") restore
 	
 	cap confirm file "`export'"
 	if _rc == 0 {
@@ -255,4 +274,4 @@ end
 * markdoc makediagram.ado, export(sthlp) replace ascii
 * markdoc makediagram.ado, export(pdf) replace style(stata)  linesize(200)
 
-
+*makediagram, export(sth.txt) replace

@@ -1,0 +1,27 @@
+digraph SEM {
+    edge [comment="Wildcard node added automatic in EG."];
+    node [shape=rectangle];
+    graph [layout=neato, 
+           outputorder=edgesfirst, 
+           overlap=true];
+    c [pos="-3,1!", 
+       label="read"];
+    d [pos="-3,-1!", 
+       label="write"];
+    e [pos="-1,0!", 
+       label="math"];
+    f [pos="1,0!", 
+       label="latent b"];
+    c -> d  [weight="0", 
+             dir=both, 
+             minlen="0"];
+    c -> e  [label="0.6"];
+    d -> e  [label="0.6"];
+    e -> f  [label="0.321", 
+             headport="w"];
+    c -> f  [tailport="c", 
+             label="0.6", 
+             headport="c"];
+    d -> f  [dir=both, 
+             label="0.6"];
+}

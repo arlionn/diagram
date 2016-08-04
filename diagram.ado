@@ -1,10 +1,12 @@
 /*** DO NOT EDIT THIS LINE -----------------------------------------------------
 Version: 1.0.0
 Title: diagram
-Description: __diagram__ generates dynamic diagrams using 
+Description: implements [Graphviz](http://www.graphviz.org/) in Stata
+and generates dynamic diagrams using 
 [DOT markup language](http://en.wikipedia.org/wiki/Dot) 
-and exports images in __pdf__, __png__, __jpeg__, __gif__, and __bmp__ format. For 
-more information [visit diagram homepage](http://www.haghish.com/dot).
+and exports images in __pdf__, __png__, __jpeg__, __gif__, and __bmp__ format. 
+The package also includes several programs that generate automatic path diagrams. For 
+more information [visit diagram homepage](http://www.haghish.com/diagram/diagram.php).
 ----------------------------------------------------- DO NOT EDIT THIS LINE ***/
 
 
@@ -23,8 +25,8 @@ Syntax
 ======
 
 {p 8 16 2}
-{cmd: diagram} [{it:DOT} | {help using} {it:filename}] [{cmd:,} 
-{it:replace} {it:export(filename)} {it:magnify(real)} {it:phantomjs(str)} {it:engine(name)} ]
+{cmd: diagram} {{it:DOT} | {help using} {it:filename}} {cmd:,} {it:export(filename)} 
+[{it:replace}  {it:magnify(real)} {it:phantomjs(str)} {it:engine(name)} ]
 {p_end}
 
 {* the new Stata help format of putting detail before generality}{...}
@@ -34,7 +36,7 @@ Syntax
 {synopt:{opt replace}}replace the exported diagram{p_end}
 {synopt:{opt engine(name)}}specifies the  
 {browse "http://www.graphviz.org/Download.php":graphViz} engine for rendering the 
-diagram which can be {bf:dot}, {bf:osage}, {bf:circo}, {bf:neato}, {bf:twopi} and {bf:fdp}s. 
+diagram which can be {bf:dot}, {bf:osage}, {bf:circo}, {bf:neato}, {bf:twopi} and {bf:fdp}. 
 The default engine is {bf:dot} {p_end}
 {synopt:{opt e:xport(filename)}}export the diagram. The file extension specifies the 
 format and it can be {bf:.pdf}, {bf:.png}, {bf:.jpeg}, {bf:.gif}, or {bf:.bmp}{p_end}
@@ -46,6 +48,25 @@ by default is {bf:1.0}{p_end}
 {synoptline}
 {p2colreset}{...}
 
+
+Example programs
+================
+
+The package includes several example programs that generate DOT path diagrams 
+that can be rendered using the __diagram__ command. These programs can be used to 
+visualize a function call of an ado-program, generate path diagram from data set, 
+and also create dynamic SEM models (prototype development). These example programs 
+are documented in separate help files:
+
+{* the new Stata help format of putting detail before generality}{...}
+{synoptset 20 tabbed}{...}
+{synopthdr:Example program}
+{synoptline}
+{synopt:{help semdiagram}}draws dynamic SEM models{p_end}
+{synopt:{help makediagram}}generates DOT path diagram from data set{p_end}
+{synopt:{help calldiagram}}visualizes the function calls of an ado-program{p_end}
+{synoptline}
+{p2colreset}{...}
 
 Description
 ===========
@@ -139,18 +160,57 @@ haghish@imbi.uni-freiburg.de
       
 [http://www.haghish.com/markdoc](http://www.haghish.com/statistics/stata-blog/reproducible-research/markdoc.php)         
 Package Updates on [Twitter](http://www.twitter.com/Haghish)  
+
+- - -
+
+This help file was dynamically produced by {help markdoc:MarkDoc Literate Programming package}
 ***/
-    
+
+cap prog drop diagram    
 prog define diagram
+
 	version 11
-	syntax [anything] [using/] , Export(str) [MAGnify(real 1.0)] [replace] 		///
+	syntax [anything] [using/] , [Export(str)] [MAGnify(real 1.0)] [replace] 	///
 	[phantomjs(str)] [install] [engine(name)] [Noisily]
 	 
-
 	
+	// -------------------------------------------------------------------------
 	// Syntax processing
 	// =========================================================================
 	
+	// setpath permanently
+	// -------------------------------------------------------------------------
+	if substr(trim(`"`macval(0)'"'),1,7) == "setpath" {
+		local 0 : subinstr local 0 "setpath" ""
+		confirm file `0'
+		
+		//Save an ado file
+		tempfile diagrampath
+		tempname knot
+		qui file open `knot' using "`diagrampath'", write text replace
+		file write `knot' "program define diagrampath" _n
+		file write `knot' `"	global diagrampath `macval(0)'"' _n
+		file write `knot' "end" _n
+		qui file close `knot'
+		qui copy "`diagrampath'" "`c(sysdir_plus)'d/diagrampath.ado", replace
+		exit
+	}
+	
+	// else check for the export option to make it obligatory
+	else if missing("`export'") {
+		di as err "the {bf:export} option is required"
+		err 198
+	}
+	
+	
+	
+	// Get phantomJS path, if defined
+	// -------------------------------------------------------------------------
+	capture prog drop diagrampath
+	capture diagrampath
+	
+	// checking for double quotation
+	// -------------------------------------------------------------------------
 	if !missing(`"`macval(anything)'"') {
 		capture local anything: di `anything'
 	}	
@@ -208,9 +268,15 @@ prog define diagram
 
 	qui cd "`wk'"
 
-	
-	if missing("`phantomjs'") local phantomjs phantomjs
-	else confirm file "`phantomjs'"
+	// check for phantomJS
+	if missing("`phantomjs'") {
+		if !missing("$diagrampath") local phantomjs $diagrampath
+		else {
+			di as err "path to phantomJS software is required"
+			error 198
+		}	
+	}	
+	confirm file "`phantomjs'"
 	  
 	
 	
@@ -218,31 +284,33 @@ prog define diagram
 	// =========================================================================
 	if !missing("`using'") {
 		
-		if (index(lower("`using'"),".dta")) {
-		preserve 
-		clear
-		quietly use "`using'"
+		*confirm file "`using'"
+		// figure out a way to confirm files from internet. the "confirm file" fails
+		tempfile tmp 
+		quietly copy "`using'" "`tmp'", replace		// this already confirms the file
 		
-		restore
-		}
-		else {
-			confirm file "`using'"
-			tempfile tmp 
-			tempname hitch 
-			qui file open `hitch' using "`using'", read
-			file read `hitch' line
-			while r(eof)==0 {
-				local source = `"`macval(source)'"' +  `"`macval(line)'"'
+		tempname hitch 
+		qui file open `hitch' using "`tmp'", read
+		file read `hitch' line
+		while r(eof)==0 {
+			
+			// Make sure the DOT script file DOES NOT HAVE COMMENTS...
+			if substr(`"`macval(line)'"',1,1) == "#" {
 				file read `hitch' line
 			}
-			local anything `"'`macval(source)''"'
+			
+			local source = `"`macval(source)'"' +  `"`macval(line)'"'
+			file read `hitch' line
 		}
+		local anything `"'`macval(source)''"'
 	}
+	
+	// di as err `"'`macval(source)''"'
 	
 	// Specify the engine
 	if missing("`engine'") {
 		cap tokenize `"`anything'"'
-		if "`1'" == "graph" local engine neato
+		if `"`1'"' == `"graph"' local engine neato
 	}
 	if !missing("`engine'") {
 		*local additional `",{ engine: "`engine'" }"'
@@ -322,6 +390,6 @@ prog define diagram
 	
 end
 
-
-* markdoc diagram.ado, exp(sthlp) replace
+* diagram setpath "/Users/haghish/Downloads/phantomjs/bin/phantomjs"
+ markdoc diagram.ado, exp(sthlp) replace
 * markdoc diagram.ado, exp(pdf) replace style(stata) title("Dynamic Diagrams in Stata") author("E. F. Haghish") date 

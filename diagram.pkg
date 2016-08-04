@@ -1,4 +1,4 @@
-d 'DIAGRAM': module for dynamic diagrams
+d 'DIAGRAM': Graphviz implementation for dynamic diagrams
 d
 d  diagram package produces diagrams from DOT markup language. The markup 
 d  language is highly customizable for generating various types of graphs 
@@ -18,15 +18,19 @@ d KW: reproducible
 d
 d Requires: Stata version 11 or higher and the 'WEBIMAGE' package
 d
-d Distribution-Date: 20160625
+d Distribution-Date: 20160725
 d
 d Author: E.F. Haghish, University of Freiburg
 d Support: email haghish@imbi.uni-freiburg.de
 d
+f calldiagram.ado
+f calldiagram.sthlp
 f diagram.ado
 f diagram.sthlp
 f diagramconnection.ado
 f diagramnode.ado
 f makediagram.ado
 f makediagram.sthlp
+f semdiagram.ado
+f semdiagram.sthlp
 F viz.js

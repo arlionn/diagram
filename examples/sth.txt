@@ -1,0 +1,2184 @@
+{smcl}
+{txt}{sf}{ul off}  - `0'
+  =  makediagram using "cluster.dta", export(cluster.gv)  replace
+    {hline 70} begin makediagram {hline}
+    - version 11
+    - syntax [using/] , Export(str) [replace] [GRAPHtype(name)] [style(str)]
+    - if !missing("`using'") {c -(}
+    = if !missing("cluster.dta") {c -(}
+    - if (!index(lower("`using'"),".dta")) {c -(}
+    = if (!index(lower("cluster.dta"),".dta")) {c -(}
+      di as err "specified data is not supported"
+      err 198
+      {c )-}
+    - {c )-}
+    - if "`graphtype'" == "graph" {c -(}
+    = if "" == "graph" {c -(}
+      local source "graph G {c -(}"
+      local sign --
+      {c )-}
+    - else if "`graphtype'" == "digraph" | missing("`graphtype'") {c -(}
+    = else if "" == "digraph" | missing("") {c -(}
+    - local source "digraph G {c -(}"
+    - local sign ->
+    - {c )-}
+    - else {c -(}
+      di as err "{c -(}bf:graphtype{c )-} invalid"
+      err 198
+      {c )-}
+    - tempfile tmp
+    - tempname knot
+    - qui file open `knot' using "`tmp'", write replace
+    = qui file open __000002 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write replace
+    - file write `knot' "`source'" _n
+    = file write __000002 "digraph G {c -(}" _n
+    - if !missing("`style'") {c -(}
+    = if !missing("") {c -(}
+      confirm file "`style'"
+      tempname hitch
+      qui file open `hitch' using "`style'", read
+      file read `hitch' line
+      while r(eof)==0 {c -(}
+      file write `knot' `"`macval(line)'"' _n
+      file read `hitch' line
+      {c )-}
+      {c )-}
+    - if !missing("`using'") {c -(}
+    = if !missing("cluster.dta") {c -(}
+    - preserve
+    - qui use "`using'", clear
+    = qui use "cluster.dta", clear
+    - {c )-}
+    - capture confirm variable cluster
+    - if _rc == 0 {c -(}
+    - if missing(cluster) {c -(}
+      file close `knot'
+      diagramconnection , tempfile("`tmp'") sign(`sign')
+      file open `knot' using "`tmp'", write append
+      {c )-}
+    - else {c -(}
+    - cap confirm string variable cluster
+    - if _rc == 0 local clusterisstring 1
+    - qui drop if missing(cluster)
+    - tempfile master
+    - qui save `master'
+    = qui save /var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000005
+    - clear
+      {hline 74} begin clear {hline}
+      - if _caller() < 10 {c -(}
+        _clear_9 `0'
+        exit
+        {c )-}
+      - version 10
+      - syntax [anything]
+      - tokenize `anything'
+      = tokenize 
+      - if `"`2'"' != "" {c -(}
+      = if `""' != "" {c -(}
+        display as err "`2' not allowed"
+        exit 198
+        {c )-}
+      - if "`1'"=="" {c -(}
+      = if ""=="" {c -(}
+      - drop _all
+      - label drop _all
+        {hline 72} begin label {hline}
+        - version 10.0
+        - gettoken val : 0
+        - if (strpos("`val'", "val") > 0 ) {c -(}
+        = if (strpos("drop", "val") > 0 ) {c -(}
+          gettoken val 0 : 0
+          syntax anything [, nofix]
+          if "`fix'" != "" {c -(}
+          local fix ", nofix"
+          {c )-}
+          gettoken var rest : anything
+          while `"`rest'"' != "" {c -(}
+          gettoken lab rest : rest
+          local label "`lab'"
+          {c )-}
+          local vlist : list anything - lab
+          if "`lab'" == "." {c -(}
+          local lab ""
+          {c )-}
+          foreach var of varlist `vlist' {c -(}
+          _label `val' `var' `lab' `fix'
+          {c )-}
+          {c )-}
+        - else {c -(}
+        - _label `macval(0)'
+        = _label drop _all
+        - {c )-}
+        {hline 74} end label {hline}
+      - {c )-}
+      - else if "`1'"=="mata" {c -(}
+      = else if ""=="mata" {c -(}
+        mata: mata clear
+        {c )-}
+      - else if inlist("`1'", "results", "matrix") {c -(}
+      = else if inlist("", "results", "matrix") {c -(}
+        return clear
+        clearreturn
+        ereturn clear
+        sreturn clear
+        _return drop _all
+        if ("`1'" == "matrix") {c -(}
+        matrix drop _all
+        _est drop _all
+        {c )-}
+        {c )-}
+      - else if "`1'"=="programs" {c -(}
+      = else if ""=="programs" {c -(}
+        program drop _all
+        {c )-}
+      - else if "`1'"=="ado" {c -(}
+      = else if ""=="ado" {c -(}
+        program drop _allado
+        {c )-}
+      - else if "`1'"=="*" | "`1'"=="all" {c -(}
+      = else if ""=="*" | ""=="all" {c -(}
+        capture mata: st_local("semmods", strofreal(sg__global.hasmodels()))
+        capture
+        if (0`semmods') {c -(}
+        display as err "-clear all- not allowed while an SEM Builder is open"
+        exit 1
+        {c )-}
+        drop _all
+        label drop _all
+        matrix drop _all
+        scalar drop _all
+        constraint drop _all
+        eq drop _all
+        file close _all
+        postutil clear
+        _return drop _all
+        discard
+        program drop _all
+        timer clear
+        mata: mata clear
+        {c )-}
+      - else {c -(}
+        display as err "`1' not allowed"
+        exit 198
+        {c )-}
+      {hline 76} end clear {hline}
+    - qui use `master'
+    = qui use /var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000005
+    - local current : di cluster[1]
+    - while !missing(cluster[1]) {c -(}
+    - qui keep if cluster == cluster[1]
+    - if missing("`clusterisstring'") {c -(}
+    = if missing("") {c -(}
+    - local nme : di "`: label (cluster) `=cluster[1]''"
+    = local nme : di "process #1"
+    - {c )-}
+    - if !missing("`clusterisstring'") {c -(}
+    = if !missing("") {c -(}
+      if substr(cluster[1], 1,1) == `"""' {c -(}
+      local current : di substr(`"`macval(current)'"',2,.)
+      {c )-}
+      if substr(cluster[1], -1,1) == `"""' {c -(}
+      local current : di substr(`"`macval(current)'"',1,strlen(`"`macval(current)'"')-1)
+      {c )-}
+      local nme `"`macval(current)'"'
+      local current : subinstr local current " " "", all
+      {c )-}
+    - file write `knot' "    subgraph cluster_`current' {c -(}" _n
+    = file write __000002 "    subgraph cluster_1 {c -(}" _n
+    - if !missing("`nme'") file write `knot' `"        label="`nme'";"' _n
+    = if !missing("process #1") file write __000002 `"        label="process #1";"' _n
+    - file close `knot'
+    = file close __000002
+    - diagramconnection , tempfile("`tmp'") sign(`sign') indent("    ")
+    = diagramconnection , tempfile("/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003") sign(->) indent("    ")
+      {hline 62} begin diagramconnection {hline}
+      - version 11
+      - syntax [using/] , tempfile(str) sign(str) [indent(str)]
+      - tempname knot
+      - file open `knot' using "`tempfile'", write append
+      = file open __000003 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+      - cap confirm string variable from
+      - if _rc == 0 local fromisstring 1
+      - cap confirm string variable to
+      - if _rc == 0 local toisstring 1
+      - forval i = 1 / `c(N)' {c -(}
+      = forval i = 1 / 3 {c -(}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "    " from[1] " -> " to[1]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"        0 -> 1"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[1]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[1]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "    " from[2] " -> " to[2]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"        1 -> 2"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[2]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[2]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "    " from[3] " -> " to[3]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"        2 -> 3"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[3]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[3]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      {hline 64} end diagramconnection {hline}
+    - file open `knot' using "`tmp'", write append
+    = file open __000002 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+    - file write `knot' "    {c )-}" _n
+    = file write __000002 "    {c )-}" _n
+    - qui use `master', clear
+    = qui use /var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000005, clear
+    - qui drop if cluster == cluster[1]
+    - qui save `master', replace
+    = qui save /var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000005, replace
+    - local current : di cluster[1]
+    - {c )-}
+    - while !missing(cluster[1]) {c -(}
+    - qui keep if cluster == cluster[1]
+    - if missing("`clusterisstring'") {c -(}
+    = if missing("") {c -(}
+    - local nme : di "`: label (cluster) `=cluster[1]''"
+    = local nme : di "process #2"
+    - {c )-}
+    - if !missing("`clusterisstring'") {c -(}
+    = if !missing("") {c -(}
+      if substr(cluster[1], 1,1) == `"""' {c -(}
+      local current : di substr(`"`macval(current)'"',2,.)
+      {c )-}
+      if substr(cluster[1], -1,1) == `"""' {c -(}
+      local current : di substr(`"`macval(current)'"',1,strlen(`"`macval(current)'"')-1)
+      {c )-}
+      local nme `"`macval(current)'"'
+      local current : subinstr local current " " "", all
+      {c )-}
+    - file write `knot' "    subgraph cluster_`current' {c -(}" _n
+    = file write __000002 "    subgraph cluster_2 {c -(}" _n
+    - if !missing("`nme'") file write `knot' `"        label="`nme'";"' _n
+    = if !missing("process #2") file write __000002 `"        label="process #2";"' _n
+    - file close `knot'
+    = file close __000002
+    - diagramconnection , tempfile("`tmp'") sign(`sign') indent("    ")
+    = diagramconnection , tempfile("/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003") sign(->) indent("    ")
+      {hline 62} begin diagramconnection {hline}
+      - version 11
+      - syntax [using/] , tempfile(str) sign(str) [indent(str)]
+      - tempname knot
+      - file open `knot' using "`tempfile'", write append
+      = file open __000003 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+      - cap confirm string variable from
+      - if _rc == 0 local fromisstring 1
+      - cap confirm string variable to
+      - if _rc == 0 local toisstring 1
+      - forval i = 1 / `c(N)' {c -(}
+      = forval i = 1 / 3 {c -(}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "    " from[1] " -> " to[1]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"        10 -> 11"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[1]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[1]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "    " from[2] " -> " to[2]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"        11 -> 12"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[2]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[2]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "    " from[3] " -> " to[3]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"        12 -> 13"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[3]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[3]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      {hline 64} end diagramconnection {hline}
+    - file open `knot' using "`tmp'", write append
+    = file open __000002 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+    - file write `knot' "    {c )-}" _n
+    = file write __000002 "    {c )-}" _n
+    - qui use `master', clear
+    = qui use /var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000005, clear
+    - qui drop if cluster == cluster[1]
+    - qui save `master', replace
+    = qui save /var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000005, replace
+    - local current : di cluster[1]
+    - {c )-}
+    - while !missing(cluster[1]) {c -(}
+      qui keep if cluster == cluster[1]
+      if missing("`clusterisstring'") {c -(}
+      local nme : di "`: label (cluster) `=cluster[1]''"
+      {c )-}
+      if !missing("`clusterisstring'") {c -(}
+      if substr(cluster[1], 1,1) == `"""' {c -(}
+      local current : di substr(`"`macval(current)'"',2,.)
+      {c )-}
+      if substr(cluster[1], -1,1) == `"""' {c -(}
+      local current : di substr(`"`macval(current)'"',1,strlen(`"`macval(current)'"')-1)
+      {c )-}
+      local nme `"`macval(current)'"'
+      local current : subinstr local current " " "", all
+      {c )-}
+      file write `knot' "    subgraph cluster_`current' {c -(}" _n
+      if !missing("`nme'") file write `knot' `"        label="`nme'";"' _n
+      file close `knot'
+      diagramconnection , tempfile("`tmp'") sign(`sign') indent("    ")
+      file open `knot' using "`tmp'", write append
+      file write `knot' "    {c )-}" _n
+      qui use `master', clear
+      qui drop if cluster == cluster[1]
+      qui save `master', replace
+      local current : di cluster[1]
+      {c )-}
+    - if !missing("`using'") {c -(}
+    = if !missing("cluster.dta") {c -(}
+    - qui use "`using'", clear
+    = qui use "cluster.dta", clear
+    - {c )-}
+    - qui keep if missing(cluster)
+    - file close `knot'
+    = file close __000002
+    - diagramconnection , tempfile("`tmp'") sign(`sign')
+    = diagramconnection , tempfile("/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003") sign(->)
+      {hline 62} begin diagramconnection {hline}
+      - version 11
+      - syntax [using/] , tempfile(str) sign(str) [indent(str)]
+      - tempname knot
+      - file open `knot' using "`tempfile'", write append
+      = file open __000003 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+      - cap confirm string variable from
+      - if _rc == 0 local fromisstring 1
+      - cap confirm string variable to
+      - if _rc == 0 local toisstring 1
+      - forval i = 1 / `c(N)' {c -(}
+      = forval i = 1 / 7 {c -(}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "" from[1] " -> " to[1]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"    98 -> 0"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[1]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[1]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "" from[2] " -> " to[2]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"    98 -> 10"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[2]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[2]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "" from[3] " -> " to[3]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"    1 -> 13"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[3]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[3]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "" from[4] " -> " to[4]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"    12 -> 3"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[4]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[4]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "" from[5] " -> " to[5]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"    3 -> 0"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[5]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[5]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "" from[6] " -> " to[6]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"    3 -> 99"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[6]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[6]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      - local next
+      - if "`fromisstring'" != "1" & "`toisstring'" != "1" {c -(}
+      = if "" != "1" & "" != "1" {c -(}
+      - local next : di "`indent'" from[`i'] " `sign' " to[`i']
+      = local next : di "" from[7] " -> " to[7]
+      - {c )-}
+      - else {c -(}
+        if "`fromisstring'" == "1" {c -(}
+        if substr(from[`i'], 1,1) == `"""' {c -(}
+        local next : di "`indent'" from[`i'] " `sign' "
+        {c )-}
+        else local next : di "`indent'" `"""'   from[`i']   `"""' " `sign' "
+        {c )-}
+        else local next : di "`indent'" from[`i'] " `sign' "
+        if "`toisstring'" == "1" {c -(}
+        if substr(to[`i'], 1,1) == `"""' {c -(}
+        local next : di `"`next'"' to[`i']
+        {c )-}
+        else local next : di `"`next'"' `"""'  to[`i']  `"""'
+        {c )-}
+        else local next : di `"`next'"' to[`i']
+        {c )-}
+      - file write `knot' `"    `next'"'
+      = file write __000003 `"    13 -> 99"'
+      - capture confirm variable label
+      - if _rc == 0 {c -(}
+      - local lbl : di label[`i']
+      = local lbl : di label[7]
+      - {c )-}
+      - capture confirm variable properties
+      - if _rc == 0 {c -(}
+      - local prp : di properties[`i']
+      = local prp : di properties[7]
+      - {c )-}
+      - if !missing("`lbl'") {c -(}
+      = if !missing("") {c -(}
+        local details `"label="`lbl'""'
+        if !missing(`"`prp'"') {c -(}
+        local details = `"`details', "'
+        {c )-}
+        {c )-}
+      - if !missing(`"`prp'"') {c -(}
+      = if !missing(`""') {c -(}
+        local details = `"`details'"' + `"`prp'"'
+        {c )-}
+      - if !missing(`"`details'"') {c -(}
+      = if !missing(`""') {c -(}
+        file write `knot' `"[`details']"'
+        {c )-}
+      - local details
+      - file write `knot' ";" _n
+      = file write __000003 ";" _n
+      - {c )-}
+      {hline 64} end diagramconnection {hline}
+    - file open `knot' using "`tmp'", write append
+    = file open __000002 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+    - {c )-}
+    - {c )-}
+    - else {c -(}
+      file close `knot'
+      diagramconnection , tempfile("`tmp'") sign(`sign')
+      file open `knot' using "`tmp'", write append
+      {c )-}
+    - file close `knot'
+    = file close __000002
+    - if !missing("`using'") local use using "`using'"
+    = if !missing("cluster.dta") local use using "cluster.dta"
+    - diagramnode `use' , tempfile("`tmp'")
+    = diagramnode using "cluster.dta" , tempfile("/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003")
+      {hline 68} begin diagramnode {hline}
+      - version 11
+      - syntax [using/] , tempfile(str)
+      - tempname knot
+      - file open `knot' using "`tempfile'", write append
+      = file open __000003 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+      - preserve
+      - if !missing("`using'") quietly use "`using'", clear
+      = if !missing("cluster.dta") quietly use "cluster.dta", clear
+      - cap confirm string variable from
+      - if _rc == 0 local fromisstring 1
+      - cap confirm string variable to
+      - if _rc == 0 local toisstring 1
+      - if "`fromisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - qui duplicates drop from, force
+        {hline 67} begin duplicates {hline}
+        - version 8
+        - gettoken cmd 0 : 0, parse(" ,")
+        - local l = length("`cmd'")
+        = local l = length("drop")
+        - if `l' == 0 {c -(}
+        = if 4 == 0 {c -(}
+          di "{c -(}err{c )-}subcommand needed; see help on {c -(}help duplicates##|_new:duplicates{c )-}"
+          exit 198
+          {c )-}
+        - if bsubstr("report",1,max(1,`l')) == "`cmd'" {c -(}
+        = if bsubstr("report",1,max(1,4)) == "drop" {c -(}
+          local cmd "report"
+          {c )-}
+        - else if bsubstr("examples",1,max(1,`l')) == "`cmd'" {c -(}
+        = else if bsubstr("examples",1,max(1,4)) == "drop" {c -(}
+          local cmd "examples"
+          {c )-}
+        - else if bsubstr("list",1,max(1,`l')) == "`cmd'" {c -(}
+        = else if bsubstr("list",1,max(1,4)) == "drop" {c -(}
+          local cmd "list"
+          {c )-}
+        - else if bsubstr("browse",1,max(1,`l')) == "`cmd'" {c -(}
+        = else if bsubstr("browse",1,max(1,4)) == "drop" {c -(}
+          local cmd "browse"
+          di "{c -(}p 0 0 2{c )-}As of Stata 11.0, browse is " "no longer a valid subcommand.  {c -(}result{c )-}See " "{c -(}help duplicates##remarks:Remarks{c )-} " "under help {c -(}helpb duplicates{c )-} " "for an explanation.{c -(}p_end{c )-}"
+          exit 198
+          {c )-}
+        - else if bsubstr("tag",1,max(1,`l')) == "`cmd'" {c -(}
+        = else if bsubstr("tag",1,max(1,4)) == "drop" {c -(}
+          local cmd "tag"
+          {c )-}
+        - else if "drop" == "`cmd'" {c -(}
+        = else if "drop" == "drop" {c -(}
+        - {c )-}
+        - else {c -(}
+          di "{c -(}err{c )-}illegal {c -(}cmd{c )-}duplicates {c -(}err{c )-}subcommand"
+          exit 198
+          {c )-}
+        - if "`cmd'" == "drop" {c -(}
+        = if "drop" == "drop" {c -(}
+        - syntax [anything] [if] [in] [, force]
+        - if "`force'" == "" {c -(}
+        = if "force" == "" {c -(}
+          if `"`anything'"' != "" {c -(}
+          confirm variable `anything'
+          di "{c -(}err{c )-}force option required with " "{c -(}cmd{c )-}duplicates drop {c -(}it{c )-}varlist{c -(}rm{c )-}"
+          exit 198
+          {c )-}
+          {c )-}
+        - capture syntax varlist [if] [in], force
+        - if _rc {c -(}
+          syntax [if] [in]
+          unab varlist : _all
+          local varlist : subinstr local varlist "`_sortindex'" ""
+          local vartext "{c -(}txt{c )-} all variables"
+          {c )-}
+        - else local vartext "{c -(}res{c )-} `varlist'"
+        = else local vartext "{c -(}res{c )-} from"
+        - {c )-}
+        - else if "`cmd'" == "tag" {c -(}
+        = else if "drop" == "tag" {c -(}
+          syntax [varlist(default=none)] [if] [in], Generate(str)
+          capture confirm new variable `generate'
+          if _rc {c -(}
+          di as err "generate() must specify new variable"
+          exit _rc
+          {c )-}
+          if "`varlist'" == "" {c -(}
+          unab varlist : _all
+          local varlist : subinstr local varlist "`_sortindex'" ""
+          local vartext "{c -(}txt{c )-} all variables"
+          {c )-}
+          else local vartext "{c -(}res{c )-} `varlist'"
+          {c )-}
+        - else {c -(}
+          syntax [varlist(default=none)] [if] [in] [ , * ]
+          if "`varlist'" == "" {c -(}
+          unab varlist : _all
+          local varlist : subinstr local varlist "`_sortindex'" ""
+          local vartext "{c -(}txt{c )-} all variables"
+          {c )-}
+          else local vartext "{c -(}res{c )-} `varlist'"
+          {c )-}
+        - marksample touse, novarlist
+        - qui count if `touse'
+        = qui count if __000005
+        - return scalar N = r(N)
+        - if r(N) == 0 {c -(}
+          error 2000
+          {c )-}
+        - tempvar order dgroup Ngroup example freq surplus uniq
+        - di _n "{c -(}p 0 4{c )-}{c -(}txt{c )-}Duplicates in terms of `vartext'{c -(}p_end{c )-}"
+        = di _n "{c -(}p 0 4{c )-}{c -(}txt{c )-}Duplicates in terms of {c -(}res{c )-} from{c -(}p_end{c )-}"
+        - gen `c(obs_t)' `order' = _n
+        = gen byte __000006 = _n
+        - bysort `touse' `varlist' : gen `c(obs_t)' `Ngroup' = _N
+        = bysort __000005 from : gen byte __000008 = _N
+        - qui if "`cmd'" == "tag" {c -(}
+        = qui if "drop" == "tag" {c -(}
+          gen long `generate' = `Ngroup' - 1 if `touse'
+          compress `generate'
+          exit 0
+          {c )-}
+        - if "`cmd'" == "report" {c -(}
+        = if "drop" == "report" {c -(}
+          bysort `touse' `Ngroup' : gen `c(obs_t)' `freq' = _N
+          by `touse' `Ngroup' : gen `c(obs_t)' `surplus' = _N - _N / `Ngroup'
+          label var `Ngroup' "copies"
+          label var `freq' "observations"
+          label var `surplus' "surplus"
+          tabdisp `Ngroup' if `touse', cell(`freq' `surplus')
+          local varcount: word count `varlist'
+          qui bysort `touse' `varlist' (`order'): gen byte `uniq' = 1 if _n==1 & `touse'
+          char `order'[varname] "obs:"
+          qui count if `uniq'==1
+          local uniqcnttol = r(N)
+          return scalar unique_value = `uniqcnttol'
+          exit 0
+          {c )-}
+        - bysort `touse' `varlist' (`order') : gen byte `example' = (_N > 1) * (_n == 1) * `touse'
+        = bysort __000005 from (__000006) : gen byte __000009 = (_N > 1) * (_n == 1) * __000005
+        - qui by `touse' `varlist' : gen `dgroup' = `example'[1]
+        = qui by __000005 from : gen __000007 = __000009[1]
+        - qui replace `dgroup' = `dgroup' * sum(`example')
+        = qui replace __000007 = __000007 * sum(__000009)
+        - char `dgroup'[varname] "group:"
+        = char __000007[varname] "group:"
+        - sort `dgroup' `order'
+        = sort __000007 __000006
+        - su `dgroup', meanonly
+        = su __000007, meanonly
+        - if `r(max)' == 0 {c -(}
+        = if 4 == 0 {c -(}
+          di _n as txt "(0 observations are duplicates)"
+          exit 0
+          {c )-}
+        - if "`cmd'" == "examples" {c -(}
+        = if "drop" == "examples" {c -(}
+          char `order'[varname] "e.g. obs:"
+          char `Ngroup'[varname] "#"
+          if `r(max)' > 1 {c -(}
+          list `dgroup' `Ngroup' `order' `varlist' if `example', subvarname noobs `options'
+          {c )-}
+          else {c -(}
+          list `Ngroup' `order' `varlist' if `example', subvarname noobs `options'
+          {c )-}
+          {c )-}
+        - else if "`cmd'" == "list" {c -(}
+        = else if "drop" == "list" {c -(}
+          char `order'[varname] "obs:"
+          if `r(max)' > 1 {c -(}
+          list `dgroup' `order' `varlist' if `dgroup', subvarname noobs `options'
+          {c )-}
+          else {c -(}
+          list `order' `varlist' if `dgroup', subvarname noobs `options'
+          {c )-}
+          {c )-}
+        - else if "`cmd'" == "drop" {c -(}
+        = else if "drop" == "drop" {c -(}
+        - di
+        - noisily drop if !`example' & `dgroup'
+        = noisily drop if !__000009 & __000007
+        - {c )-}
+        {hline 69} end duplicates {hline}
+      - forval i = 1 / `c(N)' {c -(}
+      = forval i = 1 / 9 {c -(}
+      - local nme : di from[`i']
+      = local nme : di from[1]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "A0"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("A0") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    0 [label="A0"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[2]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "A1"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("A1") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    1 [label="A1"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[3]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "A2"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("A2") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    2 [label="A2"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[4]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "B0"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("B0") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    10 [label="B0"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[5]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "B1"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("B1") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    11 [label="B1"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[6]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "B2"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("B2") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    12 [label="B2"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[7]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "start"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("start") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    98 [label="start"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[8]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "A3"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("A3") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    3 [label="A3"];"' _n
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`i']
+      = local nme : di from[9]
+      - local lblnme : di "`: label (from) `=from[`i']''"
+      = local lblnme : di "B3"
+      - if !missing("`lblnme'") {c -(}
+      = if !missing("B3") {c -(}
+      - file write `knot' `"    `nme' [label="`lblnme'"];"' _n
+      = file write __000003 `"    13 [label="B3"];"' _n
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - restore
+      - preserve
+      - if !missing("`using'") quietly use "`using'", clear
+      = if !missing("cluster.dta") quietly use "cluster.dta", clear
+      - forval i = 1 / `c(N)' {c -(}
+      = forval i = 1 / 13 {c -(}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[1]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 13 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"1"' == `"1"' {c -(}
+      - local jump 1
+      - qui drop if to == to[`j']
+      = qui drop if to == to[2]
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"10"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"11"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[5]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[6]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[7]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[8]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"1"' == `"1"' {c -(}
+      - local jump 1
+      - qui drop if to == to[`j']
+      = qui drop if to == to[8]
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[9]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"3"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[10]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"13"' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[11]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"."' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[12]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"."' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[13]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"."' == `"1"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "1" == "0" {c -(}
+        if "`toisstring'" != "1" {c -(}
+        local lblnme : di "`: label (to) `=to[`i']''"
+        if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+        qui drop if to == to[`i']
+        {c )-}
+        {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[2]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 10 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"10"' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"11"' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[5]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[6]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[7]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[8]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"3"' == `"3"' {c -(}
+      - local jump 1
+      - qui drop if to == to[`j']
+      = qui drop if to == to[8]
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[9]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"."' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[10]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"."' == `"3"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "1" == "0" {c -(}
+        if "`toisstring'" != "1" {c -(}
+        local lblnme : di "`: label (to) `=to[`i']''"
+        if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+        qui drop if to == to[`i']
+        {c )-}
+        {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[3]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 8 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"11"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"11"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"10"' == `"11"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"11"' == `"11"' {c -(}
+      - local jump 1
+      - qui drop if to == to[`j']
+      = qui drop if to == to[4]
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[5]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"11"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[6]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"3"' == `"11"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[7]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"13"' == `"11"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[8]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"."' == `"11"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "1" == "0" {c -(}
+        if "`toisstring'" != "1" {c -(}
+        local lblnme : di "`: label (to) `=to[`i']''"
+        if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+        qui drop if to == to[`i']
+        {c )-}
+        {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[4]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 7 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"10"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"10"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"10"' == `"10"' {c -(}
+      - local jump 1
+      - qui drop if to == to[`j']
+      = qui drop if to == to[3]
+      - {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"10"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[5]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"3"' == `"10"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[6]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"13"' == `"10"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[7]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"."' == `"10"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "1" == "0" {c -(}
+        if "`toisstring'" != "1" {c -(}
+        local lblnme : di "`: label (to) `=to[`i']''"
+        if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+        qui drop if to == to[`i']
+        {c )-}
+        {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[5]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 6 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"99"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"99"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"99"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"99"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[5]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"3"' == `"99"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[6]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"13"' == `"99"' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "end"
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing("end") & "99" != "." {c -(}
+      - file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+      = file write __000003 `"    99 [label="end"];"' _n
+      - {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[5]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[6]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[6]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[7]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[7]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[8]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[8]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[9]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[9]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[10]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[10]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[11]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[11]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[12]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[12]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - local jump 0
+      - local nme2 : di to[`i']
+      = local nme2 : di to[13]
+      - forval j = 1 / `c(N)' {c -(}
+      = forval j = 1 / 4 {c -(}
+      - local nme : di from[`j']
+      = local nme : di from[1]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"0"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[2]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"2"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[3]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"98"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - local nme : di from[`j']
+      = local nme : di from[4]
+      - if `"`nme'"' == `"`nme2'"' {c -(}
+      = if `"12"' == `"."' {c -(}
+        local jump 1
+        qui drop if to == to[`j']
+        {c )-}
+      - {c )-}
+      - if "`jump'" == "0" {c -(}
+      = if "0" == "0" {c -(}
+      - if "`toisstring'" != "1" {c -(}
+      = if "" != "1" {c -(}
+      - local lblnme : di "`: label (to) `=to[`i']''"
+      = local lblnme : di "."
+      - if !missing("`lblnme'") & "`nme2'" != "." {c -(}
+      = if !missing(".") & "." != "." {c -(}
+        file write `knot' `"    `nme2' [label="`lblnme'"];"' _n
+        {c )-}
+      - qui drop if to == to[`i']
+      = qui drop if to == to[13]
+      - {c )-}
+      - {c )-}
+      - {c )-}
+      - restore
+      {hline 70} end diagramnode {hline}
+    - file open `knot' using "`tmp'", write append
+    = file open __000002 using "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003", write append
+    - file write `knot' "{c )-}" _n
+    = file write __000002 "{c )-}" _n
+    - file close `knot'
+    = file close __000002
+    - copy "`tmp'" "`export'", `replace'
+    = copy "/var/folders/b8/v19wyt1d3xngpr03_nc7fbtw0000gn/T//S_00262.000003" "cluster.gv", replace
+    - if !missing("`using'") restore
+    = if !missing("cluster.dta") restore
+    - cap confirm file "`export'"
+    = cap confirm file "cluster.gv"
+    - if _rc == 0 {c -(}
+    - di as txt "{c -(}p{c )-}({c -(}bf:makediagram{c )-} created "`"{c -(}bf:{c -(}browse "`export'"{c )-}{c )-})"' _n
+    = di as txt "{c -(}p{c )-}({c -(}bf:makediagram{c )-} created "`"{c -(}bf:{c -(}browse "cluster.gv"{c )-}{c )-})"' _n
+{p}({bf:makediagram} created {bf:{browse "cluster.gv"}})
+
+    - {c )-}
+    - else display as err "{c -(}bf:makediagram{c )-} could not produce `export'" _n
+    = else display as err "{c -(}bf:makediagram{c )-} could not produce cluster.gv" _n
+    {hline 72} end makediagram {hline}
+  - quietly log close
+{smcl}
+{txt}{sf}{ul off}
