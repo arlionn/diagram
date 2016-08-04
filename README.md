@@ -1,4 +1,4 @@
-# diagram : DOT Diagrams in Stata
+# diagram : Graphviz and DOT Path Diagrams in Stata
 
 __`diagram`__ generates dynamic diagrams using 
 [DOT markup language](http://en.wikipedia.org/wiki/Dot)  
@@ -45,4 +45,13 @@ Examples
 The __examples__ directory includes several examples for generating dynamic diagrams from `DOT` markup and Stata data sets. 
 
 
-![](banner.png)
+
+Example 1
+---------
+
+In the `examples` directory, there is a DOT file named `PATH1.txt` which draws a path diagram. The file is rendered by `diagram` command and exported to a PNG file directly from Stata:
+
+    diagram using "./examples/PATH1.txt", export(./examples/example1.png)
+	
+![](./examples/example1.png)
+
