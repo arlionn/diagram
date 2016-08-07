@@ -166,7 +166,7 @@ Package Updates on [Twitter](http://www.twitter.com/Haghish)
 This help file was dynamically produced by {help markdoc:MarkDoc Literate Programming package}
 ***/
 
-cap prog drop diagram    
+*cap prog drop diagram    
 prog define diagram
 
 	version 11
@@ -391,5 +391,5 @@ prog define diagram
 end
 
 * diagram setpath "/Users/haghish/Downloads/phantomjs/bin/phantomjs"
- markdoc diagram.ado, exp(sthlp) replace
+* markdoc diagram.ado, exp(sthlp) replace
 * markdoc diagram.ado, exp(pdf) replace style(stata) title("Dynamic Diagrams in Stata") author("E. F. Haghish") date 

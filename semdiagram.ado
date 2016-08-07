@@ -76,7 +76,7 @@ _This help file was dynamically produced by[MarkDoc Literate Programming package
 
 
 
-cap prog drop semdiagram
+*cap prog drop semdiagram
 program define semdiagram, rclass
   *version 8
    

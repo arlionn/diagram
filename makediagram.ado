@@ -102,7 +102,7 @@ Package Updates on [Twitter](http://www.twitter.com/Haghish)
 This help file was dynamically produced by {help markdoc:MarkDoc Literate Programming package}
 ***/
 
-cap prog drop makediagram    
+*cap prog drop makediagram    
 prog define makediagram
 	version 11
 	syntax [using/] , Export(str) [replace] [GRAPHtype(name)]  		///
