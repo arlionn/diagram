@@ -1,10 +1,10 @@
 /*** DO NOT EDIT THIS LINE -----------------------------------------------------
-Version: 1.0.0
+Version: 1.0.1
 Title: diagram
 Description: implements [Graphviz](http://www.graphviz.org/) in Stata
-and generates dynamic diagrams using 
-[DOT markup language](http://en.wikipedia.org/wiki/Dot) 
-and exports images in __pdf__, __png__, __jpeg__, __gif__, and __bmp__ format. 
+and generates dynamic diagrams 
+using [DOT markup language](http://en.wikipedia.org/wiki/Dot) and 
+exports images in __pdf__, __png__, __jpeg__, __gif__, and __bmp__ format. 
 The package also includes several programs that generate automatic path diagrams. For 
 more information [visit diagram homepage](http://www.haghish.com/diagram/diagram.php).
 ----------------------------------------------------- DO NOT EDIT THIS LINE ***/

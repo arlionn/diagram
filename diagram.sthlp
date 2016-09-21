@@ -1,11 +1,11 @@
 {smcl}
-{right:version 1.0.0}
+{right:version 1.0.1}
 {title:Title}
 
 {phang}
-{cmd:diagram} {hline 2} implements  {browse "http://www.graphviz.org/":Graphviz} in Stata and generates dynamic diagrams using 
- {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language} 
- and exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. 
+{cmd:diagram} {hline 2} implements  {browse "http://www.graphviz.org/":Graphviz} in Stata and generates dynamic diagrams 
+ using  {browse "http://en.wikipedia.org/wiki/Dot":DOT markup language} and 
+ exports images in {bf:pdf}, {bf:png}, {bf:jpeg}, {bf:gif}, and {bf:bmp} format. 
  The package also includes several programs that generate automatic path diagrams. For 
  more information  {browse "http://www.haghish.com/diagram/diagram.php":visit diagram homepage}.
  
