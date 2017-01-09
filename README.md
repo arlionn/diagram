@@ -45,7 +45,7 @@ github install haghish/diagram
 Moreover, for exporting graphical files, the  [__webimage__](https://github.com/haghish/webimage) package requires [phantomJS](http://phantomjs.org/download.html), 
 which is an open-source freeware available for Windows, Mac, and Linux. The 
 path to the executable [phantomJS](http://phantomjs.org/download.html) file is required in order to export the graphical files. However, if the executable file is installed in the default local 
-directory (e.g. `/usr/local/bin/` in Mac), the `phantomjs(str)` can be ignored. 
+directory (e.g. `/usr/local/bin/` on Mac or `c:\phantomJS\bin\phantomJS.exe` on Windows), the `phantomjs(str)` can be ignored. 
 
 Examples
 ------------
