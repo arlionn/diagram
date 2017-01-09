@@ -1,5 +1,5 @@
 /*** DO NOT EDIT THIS LINE -----------------------------------------------------
-Version: 1.0.1
+Version: 1.0.2
 Title: diagram
 Description: implements [Graphviz](http://www.graphviz.org/) in Stata
 and generates dynamic diagrams 
@@ -133,11 +133,11 @@ Example(s)
 =================
 
     rendering DOT markup
-        . graphviz digraph G {a -> b;}, magnify(2.5) export(../diagram.png) 	///
+        . diagram "digraph G {a -> b;}", magnify(2.5) export(../diagram.png) 	///
           phantomjs("/usr/local/bin/phantomjs")
 
     rendering a graphviz file
-        . graphviz using myfile.dot, magnify(2.5) export(../diagram.png) 	///
+        . diagram using myfile.dot, magnify(2.5) export(../diagram.png) 	///
           phantomjs("/usr/local/bin/phantomjs")
 
 		  
