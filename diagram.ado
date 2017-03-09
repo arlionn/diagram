@@ -1,5 +1,5 @@
 /*** DO NOT EDIT THIS LINE -----------------------------------------------------
-Version: 1.0.2
+Version: 1.1.0
 Title: diagram
 Description: implements [Graphviz](http://www.graphviz.org/) in Stata
 and generates dynamic diagrams 
@@ -257,6 +257,9 @@ prog define diagram
 	}
 	else local javascript "`r(fn)'"
 	
+	if "`c(os)'" == "Windows" local javascript = "file:///" + "`javascript'"
+	
+	
 	qui cd "`c(sysdir_plus)'d"
 	local here : pwd
 	capture findfile diagram.js, path("`here'")
@@ -352,7 +355,8 @@ prog define diagram
 	file write `knot' 															///
 	"<!doctype html>" _n														///
 	"<html>" _n																	///
-	`"<script type="text/javascript" src="`javascript'"></script>"' _n				///
+	"<head>" _n 																///
+	`"<script type="text/javascript" src="`javascript'"></script>"' _n			///
 	`"<style type="text/css">"' _n "body {zoom:`magnify';}" _n "</style>" _n	///
 	"</head>" _n																///
 	"<body>" _n																	///
@@ -380,7 +384,10 @@ prog define diagram
 	qui copy "`tmp'" "_tmp_file_000.html", replace
 	! "`phantomjs'" "`command'" "_tmp_file_000.html" "`export'"
 	
+	//DEBUG
+	//----------
 	if missing("`noisily'") capture qui erase "_tmp_file_000.html"
+	//di as err "`phantomjs' " "`command' " "_tmp_file_000.html " "`export'"
 	
 	cap confirm file "`export'"
 	if _rc == 0 {
